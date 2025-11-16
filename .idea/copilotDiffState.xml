@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/src/main/webapp/META-INF/MANIFEST.MF">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/src/main/webapp/META-INF/MANIFEST.MF" />
+              <option name="updatedContent" value="Manifest-Version: 1.0&#10;Created-By: Maven&#10;Implementation-Title: Braille&#10;Implementation-Version: 1.0-SNAPSHOT&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
