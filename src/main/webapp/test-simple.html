@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traductor Braille</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            min-height: 60px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .error {
+            background: #ffebee;
+            border-left-color: #f44336;
+            color: #c62828;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+        .info h3 {
+            color: #1976d2;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .info ul {
+            margin-left: 20px;
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔤 Traductor Braille</h1>
+        
+        <div class="info">
+            <h3>ℹ️ Información</h3>
+            <ul>
+                <li>Soporta letras (a-z, ñ) y vocales acentuadas (á,é,í,ó,ú)</li>
+                <li>Números (0-9) y signos de puntuación</li>
+                <li>Traducción bidireccional Español ⟷ Braille</li>
+            </ul>
+        </div>
+        
+        <div class="form-group">
+            <label for="texto">Texto a traducir:</label>
+            <input type="text" id="texto" placeholder="Escribe algo..." value="Hola mundo">
+        </div>
+        
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <select id="direccion">
+                <option value="ESPANOL_A_BRAILLE">Español → Braille</option>
+                <option value="BRAILLE_A_ESPANOL">Braille → Español</option>
+            </select>
+        </div>
+        
+        <button onclick="traducir()">🔄 Traducir</button>
+        
+        <div id="resultado">El resultado aparecerá aquí...</div>
+    </div>
+    
+    <script>
+        function traducir() {
+            const texto = document.getElementById('texto').value;
+            const direccion = document.getElementById('direccion').value;
+            const resultado = document.getElementById('resultado');
+            
+            if (!texto.trim()) {
+                resultado.textContent = '⚠️ Por favor ingresa un texto';
+                resultado.className = 'error';
+                return;
+            }
+            
+            console.log('=== TRADUCCIÓN ===');
+            console.log('Texto:', texto);
+            console.log('Dirección:', direccion);
+            
+            resultado.textContent = 'Traduciendo...';
+            resultado.className = '';
+            
+            const url = '/Braille-1.0-SNAPSHOT/api/traducir';
+            const body = {
+                texto: texto,
+                direccion: direccion
+            };
+            
+            console.log('URL:', url);
+            console.log('Request:', body);
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                
+                if (data.exito) {
+                    resultado.textContent = '✅ ' + data.textoTraducido;
+                    resultado.className = '';
+                } else {
+                    resultado.textContent = '❌ ' + (data.error || 'Error desconocido');
+                    resultado.className = 'error';
+                }
+            })
+            .catch(error => {
+                console.error('ERROR:', error);
+                resultado.textContent = '❌ Error: ' + error.message;
+                resultado.className = 'error';
+            });
+        }
+        
+        // Permitir traducir con Enter
+        document.getElementById('texto').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                traducir();
+            }
+        });
+    </script>
+</body>
+</html>
