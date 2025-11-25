@@ -13,7 +13,6 @@ Contiene el diseño arquitectónico de alto nivel del sistema, incluyendo:
 - Diagramas de arquitectura del sistema
 - Descripción de componentes principales
 - Patrones de diseño utilizados
-- Diagrama de capas y módulos
 
 ### 2. Documentación del Ambiente de Desarrollo
 **Carpeta:** `Documentacion Ambiente de Desarrollo/`
@@ -30,8 +29,6 @@ Incluye toda la información relacionada con el entorno de desarrollo:
 Documentación técnica detallada del código fuente:
 - JavaDoc y comentarios del código
 - Especificación de APIs
-- Descripción de clases y métodos
-- Diagramas de clases y secuencia
 
 ### 4. Documentación de Casos de Prueba
 **Carpeta:** `Documentación casos de prueba/`
