@@ -8,14 +8,14 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
     <servlet>
-    <servlet-name>HelloController</servlet-name>
-    <servlet-class>servlet.HelloController</servlet-class>
-    <load-on-startup>1</load-on-startup>
+        <servlet-name>ControladorBraille</servlet-name>
+        <servlet-class>servlet.ControladorBraille</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-    <servlet-name>HelloController</servlet-name>
-    <url-pattern>/hello</url-pattern>
+        <servlet-name>ControladorBraille</servlet-name>
+        <url-pattern>/api/traducir</url-pattern>
     </servlet-mapping>
 
 </web-app>

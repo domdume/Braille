@@ -127,33 +127,38 @@
     </div>
     
     <script>
+        function obtenerUrlApi() {
+            // pathname típico: /Braille_war_exploded/test-simple.html
+            // Tomamos el primer segmento como context path
+            const segments = window.location.pathname.split('/').filter(s => s.length);
+            const contextPath = segments.length > 0 ? '/' + segments[0] : '';
+            return contextPath + '/api/traducir';
+        }
+
         function traducir() {
             const texto = document.getElementById('texto').value;
             const direccion = document.getElementById('direccion').value;
             const resultado = document.getElementById('resultado');
-            
+
             if (!texto.trim()) {
                 resultado.textContent = '⚠️ Por favor ingresa un texto';
                 resultado.className = 'error';
                 return;
             }
-            
+
             console.log('=== TRADUCCIÓN ===');
             console.log('Texto:', texto);
             console.log('Dirección:', direccion);
-            
+
             resultado.textContent = 'Traduciendo...';
             resultado.className = '';
-            
-            const url = '/Braille-1.0-SNAPSHOT/api/traducir';
-            const body = {
-                texto: texto,
-                direccion: direccion
-            };
-            
+
+            const url = obtenerUrlApi();
+            const body = { texto, direccion };
+
             console.log('URL:', url);
             console.log('Request:', body);
-            
+
             fetch(url, {
                 method: 'POST',
                 headers: {
@@ -163,16 +168,13 @@
             })
             .then(response => {
                 console.log('Response status:', response.status);
-                
                 if (!response.ok) {
                     throw new Error('HTTP ' + response.status);
                 }
-                
                 return response.json();
             })
             .then(data => {
                 console.log('Response data:', data);
-                
                 if (data.exito) {
                     resultado.textContent = '✅ ' + data.textoTraducido;
                     resultado.className = '';
@@ -187,7 +189,7 @@
                 resultado.className = 'error';
             });
         }
-        
+
         // Permitir traducir con Enter
         document.getElementById('texto').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {

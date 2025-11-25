@@ -1,4 +1,4 @@
-package modelo;
+package model;
 
 /**
  * Enumeración que indica la dirección de una traducción.

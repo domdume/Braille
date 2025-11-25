@@ -1,6 +1,6 @@
-package servicio;
+package service;
 
-import utilidad.MapeadorBraille;
+import util.MapeadorBraille;
 
 /* Servicio para manejar las traducciones*/
 public class ServicioTraduccionBraille {
