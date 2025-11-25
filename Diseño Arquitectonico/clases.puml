@@ -1,0 +1,64 @@
+@startuml
+skinparam classAttributeIconSize 0
+title Capa Lógica - Diagrama de Clases
+
+package "Dominio" {
+  class Traduccion <<Domain>> {
+    - textoOriginal : String
+    - textoTraducido : String
+    - direccion : DireccionTraduccion
+    --
+    + {static} crear(textoOriginal : String, direccion : DireccionTraduccion) : Traduccion
+    + ejecutar() : void
+    + getTextoOriginal() : String
+    + getTextoTraducido() : String
+    + getDireccion() : DireccionTraduccion
+  }
+
+  enum DireccionTraduccion <<Enum>> {
+    ESPANOL_A_BRAILLE
+    BRAILLE_A_ESPANOL
+  }
+}
+
+package "Servicio" {
+  class ServicioTraduccionBraille <<Service>> {
+    + procesarTraduccion(solicitud : SolicitudTraduccion) : RespuestaTraduccion
+    - validarSolicitud(solicitud : SolicitudTraduccion) : void
+    - parsearDireccion(direccionStr : String) : DireccionTraduccion
+  }
+}
+
+package "DTOs" {
+  class SolicitudTraduccion <<DTO>> {
+    - texto : String
+    - direccion : String
+    --
+    + getTexto() : String
+    + getDireccion() : String
+  }
+
+  class RespuestaTraduccion <<DTO>> {
+    - textoOriginal : String
+    - textoTraducido : String
+    - direccion : String
+    - exito : boolean
+    - mensajeError : String
+    --
+    + getTextoOriginal() : String
+    + getTextoTraducido() : String
+    + getDireccion() : String
+    + isExito() : boolean
+    + getMensajeError() : String
+  }
+}
+
+' Relaciones
+ServicioTraduccionBraille --> SolicitudTraduccion
+ServicioTraduccionBraille --> RespuestaTraduccion
+ServicioTraduccionBraille --> DireccionTraduccion
+ServicioTraduccionBraille --> Traduccion
+Traduccion --> DireccionTraduccion
+SolicitudTraduccion --> DireccionTraduccion
+RespuestaTraduccion --> DireccionTraduccion
+@enduml

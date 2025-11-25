@@ -1,0 +1,22 @@
+@startuml SecuenciaTraduccionBraille
+title Secuencia de Traducción Braille
+
+actor Usuario
+participant "index.jsp" as JSP
+participant "ControladorBraille" as Ctrl
+participant "ServicioTraduccionBraille" as Svc
+participant "Traduccion" as Dom
+participant "MapeadorBraille" as Map
+
+Usuario -> JSP : Ingresa texto + dirección
+JSP -> Ctrl : POST /api/traducir
+Ctrl -> Svc : traducir(solicitud)
+Svc -> Dom : crear + ejecutar()
+Dom -> Map : obtener símbolos
+Map --> Dom : símbolos traducidos
+Dom --> Svc : resultado (estado + texto)
+Svc --> Ctrl : DTO respuesta
+Ctrl --> JSP : JSON
+JSP --> Usuario : mostarRestultado()
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml ComponentesSistemaBraille
+' Diagrama de componentes del Sistema Traductor Braille
+' Cada paquete representa una agrupación lógica dentro de la arquitectura.
+
+title Componentes - Sistema Traductor Braille
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultTextAlignment center
+skinparam packageStyle rectangle
+
+package "Capa Web" {
+  [index.jsp] <<JSP>>
+  [ControladorBraille] <<Servlet>>
+  [FiltroCors] <<Filter>>
+}
+
+package "Capa Aplicación" {
+  [ServicioTraduccionBraille] <<Service>>
+  [SolicitudTraduccion] <<DTO>>
+  [RespuestaTraduccion] <<DTO>>
+}
+
+package "Capa Dominio" {
+  [Traduccion] <<Entidad de Dominio>>
+  [DireccionTraduccion] <<Enum>>
+  [MapeadorBraille] <<Utility>>
+}
+
+[index.jsp] --> [ControladorBraille] : Petición HTTP
+[FiltroCors] -[#gray]- [ControladorBraille] : Encabezados CORS
+[ControladorBraille] ..> [SolicitudTraduccion] : Construye
+[ControladorBraille] --> [ServicioTraduccionBraille] : traducir(solicitud)
+[ServicioTraduccionBraille] ..> [RespuestaTraduccion] : Devuelve
+[ServicioTraduccionBraille] --> [Traduccion] : ejecutar()
+[Traduccion] ..> [MapeadorBraille] : Mapeos
+[Traduccion] ..> [DireccionTraduccion]
+
+@enduml
