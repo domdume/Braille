@@ -1,29 +1,77 @@
 package dto;
 
 /**
- * Repuesta generada por el sistema tras procesar una solicitud de traducción.
- *
- * En esta clase se encapsula toda la información que el backend enviará al frontend después de ejecutar 
- * la conversión, tanto en el caso de éxito como de error.
+ * Data Transfer Object (DTO) para las respuestas de traducción generadas por el sistema.
+ * 
+ * <p>Esta clase encapsula toda la información que el backend enviará al frontend
+ * después de procesar una solicitud de traducción. Soporta tanto respuestas exitosas
+ * como respuestas con error.</p>
+ * 
+ * <p>Ejemplos de uso:</p>
+ * <pre>
+ * // Respuesta exitosa
+ * RespuestaTraduccion respuesta = new RespuestaTraduccion("Hola", "⠓⠕⠇⠁", "ESPANOL_A_BRAILLE");
+ * 
+ * // Respuesta con error
+ * RespuestaTraduccion error = new RespuestaTraduccion(false, "Texto vacío");
+ * </pre>
+ * 
+ * @author Sistema de Traducción Braille
+ * @version 1.0
+ * @since 1.0
  */
 public class RespuestaTraduccion {
 
+    /**
+     * Indica si la traducción se completó exitosamente.
+     */
     private boolean exito;
+    
+    /**
+     * Texto original antes de la traducción.
+     */
     private String textoOriginal;
+    
+    /**
+     * Texto resultante después de la traducción.
+     */
     private String textoTraducido;
+    
+    /**
+     * Dirección en la que se realizó la traducción.
+     */
     private String direccion;
+    
+    /**
+     * Mensaje de error si la traducción falló.
+     * Solo presente cuando exito = false.
+     */
     private String error;
 
-    /* Constructor vacío.*/
+    /**
+     * Constructor por defecto sin parámetros.
+     * Necesario para la serialización JSON.
+     */
     public RespuestaTraduccion() {
     }
 
-    /*Constructor = Cuando solo se indica si la operación fue exitosa o no.*/
+    /**
+     * Constructor para indicar únicamente el estado de éxito o fallo.
+     * 
+     * @param exito true si la operación fue exitosa, false en caso contrario
+     */
     public RespuestaTraduccion(boolean exito) {
         this.exito = exito;
     }
 
-    /*Constructor utilizado para respuestas exitosas.*/
+    /**
+     * Constructor para respuestas exitosas con información completa.
+     * Automáticamente establece exito = true.
+     * 
+     * @param textoOriginal El texto antes de la traducción
+     * @param textoTraducido El texto después de la traducción
+     * @param direccion La dirección de traducción aplicada
+     */
     public RespuestaTraduccion(String textoOriginal, String textoTraducido, String direccion) {
         this.exito = true;
         this.textoOriginal = textoOriginal;
@@ -31,7 +79,12 @@ public class RespuestaTraduccion {
         this.direccion = direccion;
     }
 
-    /* Constructor utilizado a respuestas con error.*/
+    /**
+     * Constructor para respuestas con error.
+     * 
+     * @param exito Debe ser false para indicar error
+     * @param error Mensaje descriptivo del error ocurrido
+     */
     public RespuestaTraduccion(boolean exito, String error) {
         this.exito = exito;
         this.error = error;
@@ -39,51 +92,92 @@ public class RespuestaTraduccion {
 
     // --- Getters y Setters ---
 
-    /* Bandera para comprobar proceso exitoso*/
+    /**
+     * Verifica si la traducción fue exitosa.
+     * 
+     * @return true si la traducción se completó correctamente, false si hubo error
+     */
     public boolean isExito() {
         return exito;
     }
 
+    /**
+     * Establece el estado de éxito de la traducción.
+     * 
+     * @param exito true para éxito, false para error
+     */
     public void setExito(boolean exito) {
         this.exito = exito;
     }
 
-    /* Devuelve el texto original enviado por el usuario. */
+    /**
+     * Obtiene el texto original enviado por el usuario.
+     * 
+     * @return El texto antes de ser traducido
+     */
     public String getTextoOriginal() {
         return textoOriginal;
     }
 
-    /* Establece el texto original para esta respuesta. */
+    /**
+     * Establece el texto original para esta respuesta.
+     * 
+     * @param textoOriginal El texto antes de la traducción
+     */
     public void setTextoOriginal(String textoOriginal) {
         this.textoOriginal = textoOriginal;
     }
 
-    /* Devuelve el texto traducido generado por el sistema. */
+    /**
+     * Obtiene el texto traducido generado por el sistema.
+     * 
+     * @return El texto después de la traducción
+     */
     public String getTextoTraducido() {
         return textoTraducido;
     }
 
-    /* Define el contenido traducido que se enviará al usuario. */
+    /**
+     * Establece el contenido traducido que se enviará al usuario.
+     * 
+     * @param textoTraducido El texto resultante de la traducción
+     */
     public void setTextoTraducido(String textoTraducido) {
         this.textoTraducido = textoTraducido;
     }
 
-    /* Indica la dirección de traducción aplicada. */
+    /**
+     * Obtiene la dirección de traducción aplicada.
+     * 
+     * @return La dirección (ESPANOL_A_BRAILLE o BRAILLE_A_ESPANOL)
+     */
     public String getDireccion() {
         return direccion;
     }
 
-    /* Establece si la traducción fue de texto a braille o viceversa. */
+    /**
+     * Establece la dirección de traducción.
+     * 
+     * @param direccion La dirección de traducción aplicada
+     */
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
-    /* Devuelve el mensaje de error, si existe. */
+    /**
+     * Obtiene el mensaje de error si la traducción falló.
+     * 
+     * @return El mensaje de error, o null si no hubo error
+     */
     public String getError() {
         return error;
     }
 
-    /* Define el mensaje de error en caso de que la traducción falle. */
+    /**
+     * Establece el mensaje de error en caso de que la traducción falle.
+     * 
+     * @param error Descripción del error ocurrido
+     */
     public void setError(String error) {
         this.error = error;
     }
