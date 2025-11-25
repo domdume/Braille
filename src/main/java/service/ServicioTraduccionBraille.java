@@ -1,170 +1,85 @@
 package service;
 
-import util.MapeadorBraille;
+import dto.SolicitudTraduccion;
+import dto.RespuestaTraduccion;
+import model.DireccionTraduccion;
+import model.Traduccion;
 
-/* Servicio para manejar las traducciones*/
+/**
+ * Servicio de aplicación para gestionar traducciones Braille.
+ *
+ * Responsabilidades:
+ * - Orquestar operaciones de traducción
+ * - Convertir entre DTOs y entidades de dominio
+ * - Coordinar la capa de dominio con la capa de presentación
+ *
+ * Este servicio NO contiene lógica de negocio, solo orquestación.
+ * La lógica de negocio reside en la clase de dominio Traduccion.
+ */
 public class ServicioTraduccionBraille {
-    
+
     /**
-     * Traduce texto en español a Braille.
-     * 
-     * @param textoEspanol Texto en español a traducir
-     * @return Texto traducido a Braille (usando caracteres Unicode Braille)
+     * Procesa una solicitud de traducción completa.
+     *
+     * @param solicitud DTO con los datos de entrada
+     * @return DTO con el resultado de la traducción
      */
-    public String traducirEspanolABraille(String textoEspanol) {
-        if (textoEspanol == null || textoEspanol.isEmpty()) {
-            return "";
+    public RespuestaTraduccion procesarTraduccion(SolicitudTraduccion solicitud) {
+        try {
+            // Validar DTO de entrada
+            validarSolicitud(solicitud);
+
+            // Convertir dirección de String a Enum
+            DireccionTraduccion direccion = parsearDireccion(solicitud.getDireccion());
+
+            // Crear y ejecutar la traducción (dominio)
+            Traduccion traduccion = Traduccion.crear(solicitud.getTexto(), direccion);
+            traduccion.ejecutar();
+
+            // Convertir resultado del dominio a DTO de respuesta
+            return new RespuestaTraduccion(
+                    traduccion.getTextoOriginal(),
+                    traduccion.getTextoTraducido(),
+                    traduccion.getDireccion().toString()
+            );
+
+        } catch (IllegalArgumentException e) {
+            // Error de validación
+            return new RespuestaTraduccion(false, e.getMessage());
+
+        } catch (Exception e) {
+            // Error inesperado
+            return new RespuestaTraduccion(false, "Error al procesar la traducción: " + e.getMessage());
         }
-        
-        StringBuilder resultadoBraille = new StringBuilder();
-        boolean enModoNumero = false;
-        
-        for (int i = 0; i < textoEspanol.length(); i++) {
-            char caracterActual = textoEspanol.charAt(i);
-            
-            // Manejador de espacios
-            if (caracterActual == ' ') {
-                enModoNumero = false;
-                resultadoBraille.append(MapeadorBraille.obtenerBrailleParaLetra(' '));
-                continue;
-            }
-            
-            // Manejador de numeros
-            if (Character.isDigit(caracterActual)) {
-                if (!enModoNumero) {
-                    resultadoBraille.append(MapeadorBraille.obtenerSignoNumero());
-                    enModoNumero = true;
-                }
-                resultadoBraille.append(MapeadorBraille.obtenerBrailleParaNumero(caracterActual));
-                continue;
-            }
-            
-            // Bandera -> Modo numero
-            if (enModoNumero) {
-                enModoNumero = false;
-            }
-            
-            // Manejador puntuación
-            String puntuacionBraille = MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
-            if (puntuacionBraille != null) {
-                resultadoBraille.append(puntuacionBraille);
-                continue;
-            }
-            
-            // Manejador mayúsculas
-            if (Character.isUpperCase(caracterActual)) {
-                resultadoBraille.append(MapeadorBraille.obtenerSignoMayuscula());
-                caracterActual = Character.toLowerCase(caracterActual);
-            }
-            
-            // Manejador letras
-            String letraBraille = MapeadorBraille.obtenerBrailleParaLetra(caracterActual);
-            if (letraBraille != null) {
-                resultadoBraille.append(letraBraille);
-            }
-        }
-        
-        return resultadoBraille.toString();
     }
-    
+
     /**
-     * Traduce texto en Braille a español.
-     * 
-     * @param textoBraille Texto en Braille a traducir
-     * @return Texto traducido a español
+     * Valida que la solicitud contenga todos los datos necesarios.
      */
-    public String traducirBrailleAEspanol(String textoBraille) {
-        if (textoBraille == null || textoBraille.isEmpty()) {
-            return "";
+    private void validarSolicitud(SolicitudTraduccion solicitud) {
+        if (solicitud == null) {
+            throw new IllegalArgumentException("La solicitud no puede ser nula");
         }
-        
-        StringBuilder resultadoEspanol = new StringBuilder();
-        boolean siguienteMayuscula = false;
-        boolean enModoNumero = false;
-        
-        for (int i = 0; i < textoBraille.length(); i++) {
-            char caracterBraille = textoBraille.charAt(i);
-            
-            // Verificador mayúscula
-            if (String.valueOf(caracterBraille).equals(MapeadorBraille.obtenerSignoMayuscula())) {
-                siguienteMayuscula = true;
-                continue;
-            }
-            
-            // Verificador número
-            if (String.valueOf(caracterBraille).equals(MapeadorBraille.obtenerSignoNumero())) {
-                enModoNumero = true;
-                continue;
-            }
-            
-            // Espacio siempre sale del modo número
-            Character letra = MapeadorBraille.obtenerLetraParaBraille(String.valueOf(caracterBraille));
-            if (letra != null && letra == ' ') {
-                resultadoEspanol.append(' ');
-                enModoNumero = false;
-                siguienteMayuscula = false;
-                continue;
-            }
-            
-            // Si estamos en modo número, tratar de convertir como número
-            if (enModoNumero) {
-                Character digito = MapeadorBraille.obtenerNumeroParaBraille(String.valueOf(caracterBraille));
-                if (digito != null) {
-                    resultadoEspanol.append(digito);
-                    continue;
-                } else {
-                    enModoNumero = false;
-                }
-            }
-            
-            // Intentar convertir puntuación
-            Character puntuacion = MapeadorBraille.obtenerPuntuacionParaBraille(String.valueOf(caracterBraille));
-            if (puntuacion != null) {
-                resultadoEspanol.append(puntuacion);
-                continue;
-            }
-            
-            // Convertir letra
-            if (letra != null) {
-                if (siguienteMayuscula) {
-                    resultadoEspanol.append(Character.toUpperCase(letra));
-                    siguienteMayuscula = false;
-                } else {
-                    resultadoEspanol.append(letra);
-                }
-            }
+
+        if (solicitud.getTexto() == null || solicitud.getTexto().trim().isEmpty()) {
+            throw new IllegalArgumentException("El texto no puede estar vacío");
         }
-        
-        return resultadoEspanol.toString();
+
+        if (solicitud.getDireccion() == null || solicitud.getDireccion().trim().isEmpty()) {
+            throw new IllegalArgumentException("La dirección es obligatoria");
+        }
     }
-    
-    /* Validacion de un texto */
-    public boolean esTextoEspanolValido(String texto) {
-        if (texto == null || texto.trim().isEmpty()) {
-            return false;
+
+    /**
+     * Convierte la dirección de String a enum.
+     */
+    private DireccionTraduccion parsearDireccion(String direccionStr) {
+        try {
+            return DireccionTraduccion.valueOf(direccionStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                    "Dirección inválida. Use 'ESPANOL_A_BRAILLE' o 'BRAILLE_A_ESPANOL'"
+            );
         }
-        // Verificacion de caracteres permitidos
-        for (char c : texto.toCharArray()) {
-            if (!MapeadorBraille.esCaracterSoportado(c)) {
-                return false;
-            }
-        }
-        
-        return true;
-    }
-    
-    /* Validacion del braille */
-    public boolean esTextoBrailleValido(String texto) {
-        if (texto == null || texto.trim().isEmpty()) {
-            return false;
-        }
-        // Verificador rango Unicode de Braille
-        for (char c : texto.toCharArray()) {
-            if (!MapeadorBraille.esCaracterBraille(c)) {
-                return false;
-            }
-        }
-        
-        return true;
     }
 }
