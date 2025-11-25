@@ -15,8 +15,6 @@ idea/
 *.iml
 *.ipr
 
-src/
-
 ### Eclipse ###
 .apt_generated
 .classpath
