@@ -136,46 +136,54 @@ public class Traduccion {
         for (int i = 0; i < textoEspanol.length(); i++) {
             char caracterActual = textoEspanol.charAt(i);
 
-            // Regla: los espacios terminan el modo número
-            if (caracterActual == ' ') {
-                enModoNumero = false;
-                resultadoBraille.append(MapeadorBraille.obtenerBrailleParaLetra(' '));
-                continue;
-            }
-
-            // Regla: los números necesitan signo especial al inicio
+            // 1) Dígitos → activan modo numérico y usan prefijo de número
             if (Character.isDigit(caracterActual)) {
                 if (!enModoNumero) {
                     resultadoBraille.append(MapeadorBraille.obtenerSignoNumero());
                     enModoNumero = true;
                 }
-                resultadoBraille.append(MapeadorBraille.obtenerBrailleParaNumero(caracterActual));
+                String numeroBraille = MapeadorBraille.obtenerBrailleParaNumero(caracterActual);
+                resultadoBraille.append(numeroBraille != null ? numeroBraille : "?");
                 continue;
             }
 
-            // Salir del modo número si no es un dígito
-            if (enModoNumero) {
+            // 2) Comas dentro del número NO rompen modo numérico
+            if (enModoNumero && caracterActual == ',') {
+                String comaBraille = MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
+                resultadoBraille.append(comaBraille != null ? comaBraille : "?");
+                continue;
+            }
+
+            // 3) Si aparece algo que NO es dígito ni coma → cerrar modo numérico
+            if (enModoNumero && !Character.isDigit(caracterActual) && caracterActual != ',') {
                 enModoNumero = false;
             }
 
-            // Regla: puntuación tiene representación especial
+            // Espacio: se mapea y de forma natural mantiene fuera del modo numérico
+            if (caracterActual == ' ') {
+                String espacioBraille = MapeadorBraille.obtenerBrailleParaLetra(' ');
+                resultadoBraille.append(espacioBraille != null ? espacioBraille : "?");
+                continue;
+            }
+
+            // 4) Mayúsculas: añadir signo de mayúscula y luego la letra en minúscula
+            if (Character.isLetter(caracterActual) && Character.isUpperCase(caracterActual)) {
+                resultadoBraille.append(MapeadorBraille.obtenerSignoMayuscula());
+                char base = Character.toLowerCase(caracterActual);
+                String letraBraille = MapeadorBraille.obtenerBrailleParaLetra(base);
+                resultadoBraille.append(letraBraille != null ? letraBraille : "?");
+                continue;
+            }
+
+            // 5) Resto de signos, minúsculas, acentos, espacio: intentar puntuación, si no letra; fallback '?'
             String puntuacionBraille = MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
             if (puntuacionBraille != null) {
                 resultadoBraille.append(puntuacionBraille);
                 continue;
             }
 
-            // Regla: las mayúsculas necesitan signo especial
-            if (Character.isUpperCase(caracterActual)) {
-                resultadoBraille.append(MapeadorBraille.obtenerSignoMayuscula());
-                caracterActual = Character.toLowerCase(caracterActual);
-            }
-
-            // Traducir letra
             String letraBraille = MapeadorBraille.obtenerBrailleParaLetra(caracterActual);
-            if (letraBraille != null) {
-                resultadoBraille.append(letraBraille);
-            }
+            resultadoBraille.append(letraBraille != null ? letraBraille : "?");
         }
 
         return resultadoBraille.toString();

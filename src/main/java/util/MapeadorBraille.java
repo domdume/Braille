@@ -13,7 +13,7 @@ public class MapeadorBraille {
     private static final String SIGNO_NUMERO = "⠼";
     
     // Símbolo para mayúsculas
-    private static final String SIGNO_MAYUSCULA = "⠠";
+    private static final String SIGNO_MAYUSCULA = "⠨";
     
     // Mapeo de letras minúsculas a Braille
     private static final Map<Character, String> LETRA_A_BRAILLE = new HashMap<>();
@@ -83,16 +83,22 @@ public class MapeadorBraille {
         NUMERO_A_BRAILLE.put('9', "⠊"); 
         
         // Puntuación
-        PUNTUACION_A_BRAILLE.put('.', "⠲");
+        PUNTUACION_A_BRAILLE.put('.', "⠄");
         PUNTUACION_A_BRAILLE.put(',', "⠂");
         PUNTUACION_A_BRAILLE.put(';', "⠆");
         PUNTUACION_A_BRAILLE.put(':', "⠒");
         PUNTUACION_A_BRAILLE.put('?', "⠢");
+        PUNTUACION_A_BRAILLE.put('¿', "⠢");
         PUNTUACION_A_BRAILLE.put('!', "⠖");
         PUNTUACION_A_BRAILLE.put('-', "⠤");
-        PUNTUACION_A_BRAILLE.put('(', "⠐⠣");
-        PUNTUACION_A_BRAILLE.put(')', "⠐⠜");
-        PUNTUACION_A_BRAILLE.put('"', "⠦");
+        PUNTUACION_A_BRAILLE.put('(', "⠣");
+        PUNTUACION_A_BRAILLE.put(')', "⠜");
+        PUNTUACION_A_BRAILLE.put('"', "⠶");
+        PUNTUACION_A_BRAILLE.put('_', "⠤");
+        PUNTUACION_A_BRAILLE.put('+', "⠖");
+        PUNTUACION_A_BRAILLE.put('=', "⠶");
+        PUNTUACION_A_BRAILLE.put('÷', "⠦");
+        PUNTUACION_A_BRAILLE.put('x', "⠲");
         
         // Crear mapeos inversos
         for (Map.Entry<Character, String> entry : LETRA_A_BRAILLE.entrySet()) {
