@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 800px;
             width: 100%;
             animation: slideUp 0.5s ease-out;
@@ -36,6 +37,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -192,14 +194,16 @@
             display: inline-block;
             width: 16px;
             height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-top-color: white;
             border-radius: 50%;
             animation: spin 0.6s linear infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         #resultado {
@@ -222,6 +226,7 @@
                 opacity: 0;
                 transform: translateY(10px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -256,7 +261,8 @@
         .result-emoji {
             display: inline-block;
             margin-right: 8px;
-            user-select: none; /* No se copia al seleccionar */
+            user-select: none;
+            /* No se copia al seleccionar */
             font-size: 1.2em;
         }
 
@@ -281,182 +287,182 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>🔤 ⠃ Traductor Braille</h1>
-    <p class="subtitle">Sistema de Traducción Bidireccional Español ⟷ Braille</p>
+    <div class="container">
+        <h1>🔤 ⠃ Traductor Braille</h1>
+        <p class="subtitle">Sistema de Traducción Bidireccional Español ⟷ Braille</p>
 
-    <div class="info-card">
-        <h3>
-            <span>ℹ️</span>
-            <span>Características del Sistema</span>
-        </h3>
-        <ul>
-            <li>✓ Alfabeto completo: letras (a-z, ñ) y vocales acentuadas (á, é, í, ó, ú)</li>
-            <li>✓ Números (0-9) con indicador especial de número</li>
-            <li>✓ Signos de puntuación: . , ; : ¿ ? ¡ ! ( ) - </li>
-            <li>✓ Soporte para mayúsculas con indicador especial</li>
-            <li>✓ Traducción bidireccional en tiempo real</li>
-        </ul>
-    </div>
+        <div class="info-card">
+            <h3>
+                <span>ℹ️</span>
+                <span>Características del Sistema</span>
+            </h3>
+            <ul>
+                <li>✓ Alfabeto completo: letras (a-z, ñ) y vocales acentuadas (á, é, í, ó, ú)</li>
+                <li>✓ Números (0-9) con indicador especial de número</li>
+                <li>✓ Signos de puntuación: . , ; : ¿ ? ¡ ! ( ) - </li>
+                <li>✓ Soporte para mayúsculas con indicador especial</li>
+                <li>✓ Traducción bidireccional en tiempo real</li>
+            </ul>
+        </div>
 
-    <form id="formTraduccion" onsubmit="return false;">
-        <div class="form-group">
-            <label for="texto">
-                <span id="labelTexto">Texto a traducir:</span>
-            </label>
-            <div class="input-wrapper">
-                    <textarea
-                            id="texto"
-                            placeholder="Escribe algo aquí..."
-                            maxlength="500"
-                            oninput="actualizarContador()">Hola mundo 123</textarea>
-                <span class="char-count" id="charCount">0/500</span>
+        <form id="formTraduccion" onsubmit="return false;">
+            <div class="form-group">
+                <label for="texto">
+                    <span id="labelTexto">Texto a traducir:</span>
+                </label>
+                <div class="input-wrapper">
+                    <textarea id="texto" placeholder="Escribe algo aquí..." maxlength="500"
+                        oninput="actualizarContador()">Hola mundo 123</textarea>
+                    <span class="char-count" id="charCount">0/500</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="direccion">Dirección de traducción:</label>
+                <select id="direccion" onchange="actualizarPlaceholder()">
+                    <option value="ESPANOL_A_BRAILLE">Español → Braille Unicode</option>
+                    <option value="BRAILLE_A_ESPANOL">Braille Unicode → Español</option>
+                </select>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn-primary" onclick="traducir()" id="btnTraducir">
+                    <span id="btnText">🔄 Traducir</span>
+                </button>
+                <button type="button" class="btn-secondary" onclick="limpiar()">
+                    🗑️ Limpiar
+                </button>
+            </div>
+        </form>
+
+        <div id="resultado" class="info">
+            <div class="result-label">Resultado:</div>
+            <div>
+                <span class="result-emoji" id="resultEmoji"></span><span class="result-text" id="resultText">El
+                    resultado aparecerá aquí...</span>
             </div>
         </div>
-
-        <div class="form-group">
-            <label for="direccion">Dirección de traducción:</label>
-            <select id="direccion" onchange="actualizarPlaceholder()">
-                <option value="ESPANOL_A_BRAILLE">Español → Braille Unicode</option>
-                <option value="BRAILLE_A_ESPANOL">Braille Unicode → Español</option>
-            </select>
-        </div>
-
-        <div class="btn-group">
-            <button type="button" class="btn-primary" onclick="traducir()" id="btnTraducir">
-                <span id="btnText">🔄 Traducir</span>
-            </button>
-            <button type="button" class="btn-secondary" onclick="limpiar()">
-                🗑️ Limpiar
-            </button>
-        </div>
-    </form>
-
-    <div id="resultado" class="info">
-        <div class="result-label">Resultado:</div>
-        <div>
-            <span class="result-emoji" id="resultEmoji"></span><span class="result-text" id="resultText">El resultado aparecerá aquí...</span>
-        </div>
     </div>
-</div>
 
-<script>
-    // Inicialización
-    document.addEventListener('DOMContentLoaded', function() {
-        actualizarContador();
-        actualizarPlaceholder();
-    });
+    <script>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function () {
+            actualizarContador();
+            actualizarPlaceholder();
+        });
 
-    // Actualizar contador de caracteres
-    function actualizarContador() {
-        const texto = document.getElementById('texto').value;
-        const count = texto.length;
-        document.getElementById('charCount').textContent = count + '/500';
-    }
-
-    // Actualizar placeholder según dirección
-    function actualizarPlaceholder() {
-        const direccion = document.getElementById('direccion').value;
-        const textarea = document.getElementById('texto');
-        const label = document.getElementById('labelTexto');
-
-        if (direccion === 'ESPANOL_A_BRAILLE') {
-            textarea.placeholder = 'Escribe texto en español...';
-            label.textContent = 'Texto en español:';
-        } else {
-            textarea.placeholder = 'Pega texto en Braille Unicode...';
-            label.textContent = 'Texto en Braille:';
-        }
-    }
-
-    // Obtener URL de la API
-    function obtenerUrlApi() {
-        const segments = window.location.pathname.split('/').filter(s => s.length);
-        const contextPath = segments.length > 0 ? '/' + segments[0] : '';
-        return contextPath + '/api/traducir';
-    }
-
-    // Mostrar resultado
-    function mostrarResultado(texto, tipo = 'info', emoji = '') {
-        const resultado = document.getElementById('resultado');
-        const resultText = document.getElementById('resultText');
-        const resultEmoji = document.getElementById('resultEmoji');
-
-        resultText.textContent = texto;
-        resultEmoji.textContent = emoji;
-        resultado.className = tipo + ' show';
-    }
-
-    // Función principal de traducción
-    async function traducir() {
-        const texto = document.getElementById('texto').value.trim();
-        const direccion = document.getElementById('direccion').value;
-        const btnTraducir = document.getElementById('btnTraducir');
-        const btnText = document.getElementById('btnText');
-
-        // Validación del lado del cliente
-        if (!texto) {
-            mostrarResultado('⚠️ Por favor ingresa un texto para traducir', 'error');
-            return;
+        // Actualizar contador de caracteres
+        function actualizarContador() {
+            const texto = document.getElementById('texto').value;
+            const count = texto.length;
+            document.getElementById('charCount').textContent = count + '/500';
         }
 
-        // Deshabilitar botón y mostrar loading
-        btnTraducir.disabled = true;
-        btnText.innerHTML = '<span class="loading"></span> Traduciendo...';
+        // Actualizar placeholder según dirección
+        function actualizarPlaceholder() {
+            const direccion = document.getElementById('direccion').value;
+            const textarea = document.getElementById('texto');
+            const label = document.getElementById('labelTexto');
 
-        try {
-            const url = obtenerUrlApi();
-            const solicitud = {
-                texto: texto,
-                direccion: direccion
-            };
-
-            console.log('📤 Enviando:', solicitud);
-
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json; charset=UTF-8'
-                },
-                body: JSON.stringify(solicitud)
-            });
-
-            const data = await response.json();
-            console.log('📥 Recibido:', data);
-
-            if (data.exito) {
-                const emoji = direccion === 'ESPANOL_A_BRAILLE' ? '⠃' : '🔤';
-                mostrarResultado(data.textoTraducido, 'success', emoji);
+            if (direccion === 'ESPANOL_A_BRAILLE') {
+                textarea.placeholder = 'Escribe texto en español...';
+                label.textContent = 'Texto en español:';
             } else {
-                mostrarResultado((data.error || 'Error desconocido'), 'error', '❌');
+                textarea.placeholder = 'Pega texto en Braille Unicode...';
+                label.textContent = 'Texto en Braille:';
+            }
+        }
+
+        // Obtener URL de la API
+        function obtenerUrlApi() {
+            const segments = window.location.pathname.split('/').filter(s => s.length);
+            const contextPath = segments.length > 0 ? '/' + segments[0] : '';
+            return contextPath + '/api/traducir';
+        }
+
+        // Mostrar resultado
+        function mostrarResultado(texto, tipo = 'info', emoji = '') {
+            const resultado = document.getElementById('resultado');
+            const resultText = document.getElementById('resultText');
+            const resultEmoji = document.getElementById('resultEmoji');
+
+            resultText.textContent = texto;
+            resultEmoji.textContent = emoji;
+            resultado.className = tipo + ' show';
+        }
+
+        // Función principal de traducción
+        async function traducir() {
+            const texto = document.getElementById('texto').value.trim();
+            const direccion = document.getElementById('direccion').value;
+            const btnTraducir = document.getElementById('btnTraducir');
+            const btnText = document.getElementById('btnText');
+
+            // Validación del lado del cliente
+            if (!texto) {
+                mostrarResultado('⚠️ Por favor ingresa un texto para traducir', 'error');
+                return;
             }
 
-        } catch (error) {
-            console.error('❌ Error:', error);
-            mostrarResultado('Error de conexión: ' + error.message, 'error', '❌');
-        } finally {
-            // Rehabilitar botón
-            btnTraducir.disabled = false;
-            btnText.innerHTML = '🔄 Traducir';
-        }
-    }
+            // Deshabilitar botón y mostrar loading
+            btnTraducir.disabled = true;
+            btnText.innerHTML = '<span class="loading"></span> Traduciendo...';
 
-    // Limpiar formulario
-    function limpiar() {
-        document.getElementById('texto').value = '';
-        document.getElementById('resultado').classList.remove('show');
-        actualizarContador();
-        document.getElementById('texto').focus();
-    }
+            try {
+                const url = obtenerUrlApi();
+                const solicitud = {
+                    texto: texto,
+                    direccion: direccion
+                };
 
-    // Permitir traducir con Ctrl+Enter
-    document.getElementById('texto').addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.key === 'Enter') {
-            e.preventDefault();
-            traducir();
+                console.log('📤 Enviando:', solicitud);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json; charset=UTF-8'
+                    },
+                    body: JSON.stringify(solicitud)
+                });
+
+                const data = await response.json();
+                console.log('📥 Recibido:', data);
+
+                if (data.exito) {
+                    const emoji = direccion === 'ESPANOL_A_BRAILLE' ? '⠃' : '🔤';
+                    mostrarResultado(data.textoTraducido, 'success', emoji);
+                } else {
+                    mostrarResultado((data.error || 'Error desconocido'), 'error', '❌');
+                }
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                mostrarResultado('Error de conexión: ' + error.message, 'error', '❌');
+            } finally {
+                // Rehabilitar botón
+                btnTraducir.disabled = false;
+                btnText.innerHTML = '🔄 Traducir';
+            }
         }
-    });
-</script>
+
+        // Limpiar formulario
+        function limpiar() {
+            document.getElementById('texto').value = '';
+            document.getElementById('resultado').classList.remove('show');
+            actualizarContador();
+            document.getElementById('texto').focus();
+        }
+
+        // Permitir traducir con Ctrl+Enter
+        document.getElementById('texto').addEventListener('keydown', function (e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                traducir();
+            }
+        });
+    </script>
 </body>
+
 </html>
