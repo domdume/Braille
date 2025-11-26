@@ -251,9 +251,10 @@ public class MapeadorBraille {
         PUNTUACION_A_BRAILLE.put('_', "⠤");
         PUNTUACION_A_BRAILLE.put('+', "⠖");
         PUNTUACION_A_BRAILLE.put('=', "⠶");
-        PUNTUACION_A_BRAILLE.put('÷', "⠦");
-        PUNTUACION_A_BRAILLE.put('x', "⠲");
-
+        PUNTUACION_A_BRAILLE.put('÷', "⠲");
+        PUNTUACION_A_BRAILLE.put('*', "⠦");
+        PUNTUACION_A_BRAILLE.put('/', "⠌");
+        PUNTUACION_A_BRAILLE.put('¡', "⠖");
         // Crear mapeos inversos
         for (Map.Entry<Character, String> entry : LETRA_A_BRAILLE.entrySet()) {
             BRAILLE_A_LETRA.put(entry.getValue(), entry.getKey());

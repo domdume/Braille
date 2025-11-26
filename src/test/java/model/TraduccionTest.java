@@ -242,6 +242,42 @@ class TraduccionTest {
         assertEquals(esperado, resultado);
     }
 
+    @Test
+    @DisplayName("Deve traducir signos matemáticos y operadores correctamente")
+    void debeTraducirSignosMatematicos() {
+        //Arrange
+        String textoOriginal = "2+2=4";
+        DireccionTraduccion direccion = DireccionTraduccion.ESPANOL_A_BRAILLE;
 
+        //Act
+        Traduccion traduccion = Traduccion.crear(textoOriginal, direccion);
+        traduccion.ejecutar();
+        String resultado = traduccion.getTextoTraducido();
 
-}
+        //Assert
+        assertEquals("⠼⠃⠖⠼⠃⠶⠼⠙", resultado,
+                "La traducción de operaciones matemáticas debe incluir signos +, = y números");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "¡Hola!, ⠖⠨⠓⠕⠇⠁⠖",
+            "¿Cómo?, ⠢⠨⠉⠬⠍⠕⠢",
+            "(texto), ⠣⠞⠑⠭⠞⠕⠜",
+            "a-b, ⠁⠤⠃",
+            "5*3, ⠼⠑⠦⠼⠉",
+            "10/2, ⠼⠁⠚⠌⠼⠃"
+    })
+    @DisplayName("Debe traducir todos los caracteres especiales soportados")
+    void debeTraducirCaracteresEspeciales(String textoEspanol, String textoBrailleEsperado) {
+        // Arrange
+        Traduccion traduccion = Traduccion.crear(textoEspanol, DireccionTraduccion.ESPANOL_A_BRAILLE);
+
+        // Act
+        traduccion.ejecutar();
+
+        // Assert
+        assertEquals(textoBrailleEsperado, traduccion.getTextoTraducido(),
+                "La traducción de '" + textoEspanol + "' con caracteres especiales no coincide");
+    }
+ }
