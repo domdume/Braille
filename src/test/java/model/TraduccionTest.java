@@ -148,12 +148,12 @@ class TraduccionTest {
 
         @ParameterizedTest
         @CsvSource({
-            "José, ⠠⠚⠕⠎⠮",
-            "María, ⠠⠍⠁⠗⠌⠁",
+            "José, ⠨⠚⠕⠎⠮",
+            "María, ⠨⠍⠁⠗⠌⠁",
             "bebé, ⠃⠑⠃⠮",
             "papá, ⠏⠁⠏⠷",
-            "Ramón, ⠠⠗⠁⠍⠬⠝",
-            "Raúl, ⠠⠗⠁⠾⠇",
+            "Ramón, ⠨⠗⠁⠍⠬⠝",
+            "Raúl, ⠨⠗⠁⠾⠇",
             "pingüino, ⠏⠊⠝⠛⠳⠊⠝⠕"
         })
         @DisplayName("Debe traducir palabras con vocales acentuadas y caracteres especiales")

@@ -4,12 +4,12 @@ import util.MapeadorBraille;
 
 /**
  * Entidad de dominio que representa una traducción Braille.
- * 
+ *
  * <p>Esta clase encapsula toda la lógica de negocio relacionada con las traducciones,
  * implementando el patrón de dominio rico (Rich Domain Model). Es responsable de
  * validar, ejecutar y mantener el estado de las traducciones bidireccionales entre
  * español y Braille.</p>
- * 
+ *
  * <p>Responsabilidades principales:</p>
  * <ul>
  *   <li>Validar textos de entrada según reglas de negocio</li>
@@ -17,7 +17,7 @@ import util.MapeadorBraille;
  *   <li>Mantener el estado de una traducción (PENDIENTE, COMPLETADA, FALLIDA)</li>
  *   <li>Aplicar reglas específicas de codificación Braille</li>
  * </ul>
- * 
+ *
  * <p>Reglas de negocio implementadas:</p>
  * <ul>
  *   <li>Números: Requieren signo especial (⠼) al inicio de secuencia numérica</li>
@@ -25,14 +25,14 @@ import util.MapeadorBraille;
  *   <li>Espacios: Desactivan el modo número</li>
  *   <li>Normalización: Espacios múltiples se reducen a uno solo</li>
  * </ul>
- * 
+ *
  * <p>Ejemplo de uso:</p>
  * <pre>
  * Traduccion traduccion = Traduccion.crear("Hola 123", DireccionTraduccion.ESPANOL_A_BRAILLE);
  * traduccion.ejecutar();
  * String braille = traduccion.getTextoTraducido();
  * </pre>
- * 
+ *
  * @author Sistema de Traducción Braille
  * @version 1.0
  * @since 1.0
@@ -45,17 +45,17 @@ public class Traduccion {
      * Texto original sin modificar.
      */
     private String textoOriginal;
-    
+
     /**
      * Texto resultante después de la traducción.
      */
     private String textoTraducido;
-    
+
     /**
      * Dirección en la que se realizará la traducción.
      */
     private DireccionTraduccion direccion;
-    
+
     /**
      * Estado actual de la traducción.
      */
@@ -63,7 +63,7 @@ public class Traduccion {
 
     /**
      * Enumeración que define los posibles estados de una traducción.
-     * 
+     *
      * <ul>
      *   <li>PENDIENTE: La traducción ha sido creada pero no ejecutada</li>
      *   <li>COMPLETADA: La traducción se ejecutó exitosamente</li>
@@ -81,7 +81,7 @@ public class Traduccion {
 
     /**
      * Constructor privado para forzar el uso de factory method.
-     * 
+     *
      * @param textoOriginal Texto a traducir
      * @param direccion Dirección de la traducción
      */
@@ -93,7 +93,7 @@ public class Traduccion {
 
     /**
      * Factory method para crear una nueva traducción.
-     * 
+     *
      * <p>Este método valida la entrada antes de crear la instancia,
      * garantizando que solo se creen traducciones con datos válidos.</p>
      *
@@ -109,7 +109,7 @@ public class Traduccion {
 
     /**
      * Valida que la entrada cumpla con las reglas de negocio básicas.
-     * 
+     *
      * @param texto Texto a validar
      * @param direccion Dirección a validar
      * @throws IllegalArgumentException si algún parámetro es inválido
@@ -126,7 +126,7 @@ public class Traduccion {
 
     /**
      * Ejecuta la traducción aplicando todas las reglas de negocio.
-     * 
+     *
      * <p>Proceso de ejecución:</p>
      * <ol>
      *   <li>Limpia espacios al inicio y final del texto</li>
@@ -147,9 +147,10 @@ public class Traduccion {
         try {
             // Limpiar espacios al inicio y final (común cuando se copia/pega)
             String textoLimpio = textoOriginal.trim();
-            
-            // Normalizar espacios múltiples a un solo espacio
-            textoLimpio = textoLimpio.replaceAll("\\s+", " ");
+
+            // Normalizar espacios múltiples a un solo espacio, preservando saltos de línea
+            // Reemplaza grupos de espacios, tabs, carriage return y form feed por un espacio, NO toca '\n'
+            textoLimpio = textoLimpio.replaceAll("[ \\t\\f\\r]+", " ");
 
             // Validar según la dirección
             if (direccion == DireccionTraduccion.ESPANOL_A_BRAILLE) {
@@ -170,7 +171,7 @@ public class Traduccion {
 
     /**
      * Valida que el texto contenga solo caracteres soportados en español.
-     * 
+     *
      * <p>Caracteres soportados incluyen:</p>
      * <ul>
      *   <li>Letras: a-z, A-Z, ñ, Ñ</li>
@@ -179,13 +180,15 @@ public class Traduccion {
      *   <li>Puntuación: . , ; : ? ! - ( ) "</li>
      *   <li>Espacio</li>
      * </ul>
-     * 
+     *
      * @param texto Texto a validar
      * @throws IllegalArgumentException si el texto contiene caracteres no soportados
      */
     private void validarTextoEspanol(String texto) {
         for (char c : texto.toCharArray()) {
-            if (!MapeadorBraille.esCaracterSoportado(c)) {
+            // Permitir saltos de línea sin validación de mapeo
+            if (c == '\n') continue;
+            if (!util.MapeadorBraille.esCaracterSoportado(c)) {
                 throw new IllegalArgumentException(
                         "El texto contiene caracteres no soportados: '" + c + "'"
                 );
@@ -195,9 +198,9 @@ public class Traduccion {
 
     /**
      * Valida que el texto contenga solo caracteres Braille válidos.
-     * 
+     *
      * <p>Los caracteres Braille válidos están en el rango Unicode U+2800 a U+28FF.</p>
-     * 
+     *
      * @param texto Texto a validar
      * @throws IllegalArgumentException si el texto contiene caracteres no Braille
      */
@@ -213,7 +216,7 @@ public class Traduccion {
 
     /**
      * Traduce texto en español a representación Braille.
-     * 
+     *
      * <p>Reglas de conversión aplicadas:</p>
      * <ul>
      *   <li>Números: Se antecede ⠼ al inicio de una secuencia numérica</li>
@@ -233,20 +236,27 @@ public class Traduccion {
         for (int i = 0; i < textoEspanol.length(); i++) {
             char caracterActual = textoEspanol.charAt(i);
 
+            // Preservar saltos de línea y salir de modo numérico
+            if (caracterActual == '\n') {
+                resultadoBraille.append('\n');
+                enModoNumero = false;
+                continue;
+            }
+
             // 1) Dígitos → activan modo numérico y usan prefijo de número
             if (Character.isDigit(caracterActual)) {
                 if (!enModoNumero) {
-                    resultadoBraille.append(MapeadorBraille.obtenerSignoNumero());
+                    resultadoBraille.append(util.MapeadorBraille.obtenerSignoNumero());
                     enModoNumero = true;
                 }
-                String numeroBraille = MapeadorBraille.obtenerBrailleParaNumero(caracterActual);
+                String numeroBraille = util.MapeadorBraille.obtenerBrailleParaNumero(caracterActual);
                 resultadoBraille.append(numeroBraille != null ? numeroBraille : "?");
                 continue;
             }
 
             // 2) Comas dentro del número NO rompen modo numérico
             if (enModoNumero && caracterActual == ',') {
-                String comaBraille = MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
+                String comaBraille = util.MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
                 resultadoBraille.append(comaBraille != null ? comaBraille : "?");
                 continue;
             }
@@ -258,28 +268,28 @@ public class Traduccion {
 
             // Espacio: se mapea y de forma natural mantiene fuera del modo numérico
             if (caracterActual == ' ') {
-                String espacioBraille = MapeadorBraille.obtenerBrailleParaLetra(' ');
+                String espacioBraille = util.MapeadorBraille.obtenerBrailleParaLetra(' ');
                 resultadoBraille.append(espacioBraille != null ? espacioBraille : "?");
                 continue;
             }
 
             // 4) Mayúsculas: añadir signo de mayúscula y luego la letra en minúscula
             if (Character.isLetter(caracterActual) && Character.isUpperCase(caracterActual)) {
-                resultadoBraille.append(MapeadorBraille.obtenerSignoMayuscula());
+                resultadoBraille.append(util.MapeadorBraille.obtenerSignoMayuscula());
                 char base = Character.toLowerCase(caracterActual);
-                String letraBraille = MapeadorBraille.obtenerBrailleParaLetra(base);
+                String letraBraille = util.MapeadorBraille.obtenerBrailleParaLetra(base);
                 resultadoBraille.append(letraBraille != null ? letraBraille : "?");
                 continue;
             }
 
             // 5) Resto de signos, minúsculas, acentos, espacio: intentar puntuación, si no letra; fallback '?'
-            String puntuacionBraille = MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
+            String puntuacionBraille = util.MapeadorBraille.obtenerBrailleParaPuntuacion(caracterActual);
             if (puntuacionBraille != null) {
                 resultadoBraille.append(puntuacionBraille);
                 continue;
             }
 
-            String letraBraille = MapeadorBraille.obtenerBrailleParaLetra(caracterActual);
+            String letraBraille = util.MapeadorBraille.obtenerBrailleParaLetra(caracterActual);
             resultadoBraille.append(letraBraille != null ? letraBraille : "?");
         }
 
@@ -288,7 +298,7 @@ public class Traduccion {
 
     /**
      * Traduce texto en Braille a español.
-     * 
+     *
      * <p>Reglas de conversión aplicadas:</p>
      * <ul>
      *   <li>Signo ⠼: Activa modo número para los siguientes símbolos</li>
@@ -366,7 +376,7 @@ public class Traduccion {
 
     /**
      * Obtiene el texto original sin modificar.
-     * 
+     *
      * @return El texto original proporcionado al crear la traducción
      */
     public String getTextoOriginal() {
@@ -375,11 +385,11 @@ public class Traduccion {
 
     /**
      * Obtiene el texto traducido.
-     * 
+     *
      * <p>Este método solo debe llamarse después de ejecutar la traducción.
      * Si se intenta acceder al texto traducido antes de completar la traducción,
      * se lanzará una excepción.</p>
-     * 
+     *
      * @return El texto resultante de la traducción
      * @throws IllegalStateException si la traducción no ha sido completada
      */
@@ -392,7 +402,7 @@ public class Traduccion {
 
     /**
      * Obtiene la dirección de la traducción.
-     * 
+     *
      * @return La dirección (ESPANOL_A_BRAILLE o BRAILLE_A_ESPANOL)
      */
     public DireccionTraduccion getDireccion() {
@@ -401,7 +411,7 @@ public class Traduccion {
 
     /**
      * Obtiene el estado actual de la traducción.
-     * 
+     *
      * @return El estado (PENDIENTE, COMPLETADA o FALLIDA)
      */
     public EstadoTraduccion getEstado() {
@@ -410,7 +420,7 @@ public class Traduccion {
 
     /**
      * Verifica si la traducción está completada exitosamente.
-     * 
+     *
      * @return true si el estado es COMPLETADA, false en caso contrario
      */
     public boolean estaCompletada() {
@@ -419,7 +429,7 @@ public class Traduccion {
 
     /**
      * Verifica si la traducción falló durante su ejecución.
-     * 
+     *
      * @return true si el estado es FALLIDA, false en caso contrario
      */
     public boolean haFallado() {
