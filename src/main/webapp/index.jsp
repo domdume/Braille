@@ -7,6 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Traductor Braille - Sistema de Traducción Bidireccional</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
         <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
         <script>
             tailwind.config = {
@@ -57,7 +58,7 @@
                         </div>
                         <div>
                             <h1 class="text-2xl font-bold text-gray-800">Traductor Braille</h1>
-                            <p class="text-sm text-gray-500">Sistema de traducción bidireccional</p>
+                            <p class="text-sm text-gray-500">Sistema de traducción </p>
                         </div>
                     </div>
                     <div class="hidden md:flex items-center space-x-2 text-sm text-gray-600">
@@ -89,7 +90,7 @@
             </div>
 
             <!-- Features Cards -->
-            <div class="grid md:grid-cols-3 gap-6 mb-12 animate-slide-up">
+            <div class="grid md:grid-cols-2 gap-6 mb-12 animate-slide-up">
                 <!-- Feature 1 -->
                 <div
                     class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
@@ -102,7 +103,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-800 mb-2">Alfabeto Completo</h3>
-                    <p class="text-gray-600">Letras A-Z, Ñ y vocales acentuadas (á, é, í, ó, ú) totalmente soportadas
+                    <p class="text-gray-600">Letras A-Z, Ñ y vocales acentuadas (á, é, í, ó, ú)
                     </p>
                 </div>
 
@@ -119,46 +120,49 @@
                     <h3 class="text-xl font-bold text-gray-800 mb-2">Números y Símbolos</h3>
                     <p class="text-gray-600">Números 0-9 y signos de puntuación con indicadores especiales</p>
                 </div>
-
-                <!-- Feature 3 -->
-                <div
-                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Tiempo Real</h3>
-                    <p class="text-gray-600">Traducción bidireccional instantánea con validación inteligente</p>
-                </div>
+                <%--
+                                <!-- Feature 3 -->
+                                <div
+                                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
+                                    <div
+                                        class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center mb-4">
+                                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Tiempo Real</h3>
+                                    <p class="text-gray-600">Traducción bidireccional instantánea con validación inteligente</p>
+                                </div>
+                                --%>
             </div>
 
             <!-- Translator Section -->
             <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-5xl mx-auto animate-scale-in">
+                <%--
+                                <!-- Info Banner -->
+                                <div
+                                    class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-lg p-5 mb-8">
+                                    <div class="flex items-start">
+                                        <svg class="w-6 h-6 text-primary-600 mt-0.5 mr-3 flex-shrink-0" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
 
-                <!-- Info Banner -->
-                <div
-                    class="bg-gradient-to-r from-primary-50 to-accent-50 border-l-4 border-primary-500 rounded-lg p-5 mb-8">
-                    <div class="flex items-start">
-                        <svg class="w-6 h-6 text-primary-600 mt-0.5 mr-3 flex-shrink-0" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <div class="text-sm text-gray-700">
-                            <p class="font-semibold mb-2">Características del Sistema:</p>
-                            <ul class="space-y-1 ml-4 list-disc">
-                                <li>Alfabeto completo con Ñ y vocales acentuadas</li>
-                                <li>Números con indicador especial</li>
-                                <li>Puntuación: . , ; : ¿ ? ¡ ! ( ) -</li>
-                                <li>Soporte para mayúsculas</li>
-                            </ul>
+                                        <div class="text-sm text-gray-700">
+                                            <p class="font-semibold mb-2">Características del Sistema:</p>
+                                            <ul class="space-y-1 ml-4 list-disc">
+                                                <li>Alfabeto completo con Ñ y vocales acentuadas</li>
+                                                <li>Números con indicador especial</li>
+                                                <li>Puntuación: . , ; : ¿ ? ¡ ! ( ) -</li>
+                                                <li>Soporte para mayúsculas</li>
+                                            </ul>
+
                         </div>
                     </div>
                 </div>
-
+--%>
                 <!-- Form -->
                 <form id="formTraduccion" class="space-y-6">
 
@@ -167,19 +171,14 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">
                             Dirección de traducción
                         </label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="direccion" value="ESPANOL_A_BRAILLE" checked
-                                    class="peer sr-only">
-                                <div
-                                    class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300">
+                        <div class="grid grid-cols-3 gap-4">
+                            <label class="relative cursor-pointer col-span-2">
+                                <input type="radio" name="direccion" value="ESPANOL_A_BRAILLE" checked class="peer sr-only">
+                                <div class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-2xl">🔤</span>
-                                        <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100"
-                                            fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd"></path>
+                                        <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
                                     </div>
                                     <p class="font-semibold text-gray-800">Español → Braille</p>
@@ -187,24 +186,19 @@
                                 </div>
                             </label>
 
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="direccion" value="BRAILLE_A_ESPANOL" class="peer sr-only">
-                                <div
-                                    class="border-2 border-gray-200 peer-checked:border-accent-500 peer-checked:bg-accent-50 rounded-xl p-4 transition-all duration-200 hover:border-accent-300">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-2xl">⠃</span>
-                                        <svg class="w-5 h-5 text-accent-600 opacity-0 peer-checked:opacity-100"
-                                            fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <p class="font-semibold text-gray-800">Braille → Español</p>
-                                    <p class="text-xs text-gray-500 mt-1">Convierte Braille a texto</p>
-                                </div>
-                            </label>
+                            <!-- Botón Descargar directo a PNG -->
+                            <div class="col-span-1">
+                                <button type="button" id="btnDescargar"
+                                        class="w-full border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200"
+                                        onclick="descargarBraille()">
+                                    <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
+                                    </svg>
+                                    <span class="font-semibold">Descargar PNG</span>
+                                </button>
+                            </div>
                         </div>
+
                     </div>
 
                     <!-- Text Input -->
@@ -257,7 +251,17 @@
                         </div>
                     </div>
                 </div>
+
+                <!--BOTON COPIAR-->
+                <div class="flex gap-4 mt-8">
+                    <button type="button" onclick="copiar()" id="btnCopiar"
+                            class="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                        <span id="btnTextCopiar">Copiar</span>
+                    </button>
+                </div>
+
             </div>
+
 
             <!-- Additional Info Section -->
             <div class="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-6">
@@ -265,8 +269,7 @@
                     <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
                         <svg class="w-6 h-6 text-primary-500 mr-2" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
                             </path>
                         </svg>
                         ¿Cómo usar?
@@ -275,7 +278,7 @@
                         <li>Selecciona la dirección de traducción</li>
                         <li>Escribe o pega tu texto</li>
                         <li>Haz clic en "Traducir"</li>
-                        <li>Copia el resultado seleccionándolo</li>
+                        <li>Pulsa "Descargar PNG" para obtener la señalética</li>
                     </ol>
                     <p class="text-xs text-gray-500 mt-4">💡 Atajo: Ctrl + Enter para traducir</p>
                 </div>
@@ -311,6 +314,8 @@
         </footer>
 
         <script>
+            // Variable global para conservar la última traducción Braille sin que se sobreescriba por mensajes
+            let ultimaTraduccionBraille = '';
             // Inicialización
             document.addEventListener('DOMContentLoaded', function () {
                 actualizarContador();
@@ -426,8 +431,11 @@
                     const data = await response.json();
 
                     if (data.exito) {
-                        const emoji = direccion === 'ESPANOL_A_BRAILLE' ? '⠃' : '🔤';
-                        mostrarResultado(data.textoTraducido, 'success', emoji);
+                        mostrarResultado(data.textoTraducido, 'success', '');
+                        // Guardar la traducción Braille solo si la dirección es Español -> Braille
+                        if (direccion === 'ESPANOL_A_BRAILLE') {
+                            ultimaTraduccionBraille = data.textoTraducido || '';
+                        }
                     } else {
                         mostrarResultado(data.error || 'Error desconocido', 'error', '❌');
                     }
@@ -452,7 +460,186 @@
                 actualizarContador();
                 document.getElementById('texto').focus();
             }
+
+            // Copiar resultado al portapapeles
+            async function copiar() {
+                const resultTextEl = document.getElementById('resultText');
+                const btnCopiar = document.getElementById('btnCopiar');
+                const btnIcon = document.getElementById('btnIconCopiar');
+                const btnText = document.getElementById('btnTextCopiar');
+
+                const texto = resultTextEl ? resultTextEl.textContent.trim() : '';
+
+                if (!texto) {
+                    // Mostrar mensaje de error si no hay nada que copiar
+                    mostrarResultado('No hay texto para copiar', 'error', '⚠️');
+                    return;
+                }
+
+                // Guardar estado anterior para restaurar después
+                const prevIcon = btnIcon ? btnIcon.innerHTML : '';
+                const prevText = btnText ? btnText.textContent : '';
+
+                try {
+                    if (btnCopiar) {
+                        btnCopiar.disabled = true;
+                    }
+
+                    if (btnIcon) {
+                        // Mostrar spinner pequeño
+                        btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
+                        btnIcon.classList.add('animate-spin');
+                    }
+                    if (btnText) btnText.textContent = 'Copiando...';
+
+                    // Intentar usar Clipboard API
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(texto);
+                    } else {
+                        // Fallback para navegadores antiguos
+                        const textarea = document.createElement('textarea');
+                        textarea.value = texto;
+                        textarea.setAttribute('readonly', '');
+                        textarea.style.position = 'absolute';
+                        textarea.style.left = '-9999px';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                            document.execCommand('copy');
+                        } finally {
+                            document.body.removeChild(textarea);
+                        }
+                    }
+
+                    // Feedback de éxito
+                    if (btnIcon) {
+                        btnIcon.classList.remove('animate-spin');
+                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                    }
+                    if (btnText) btnText.textContent = 'Copiado';
+
+                    // Restaurar después de un momento
+                    setTimeout(() => {
+                        if (btnIcon) btnIcon.innerHTML = prevIcon;
+                        if (btnText) btnText.textContent = prevText;
+                        if (btnCopiar) btnCopiar.disabled = false;
+                    }, 1800);
+
+                } catch (err) {
+                    console.error('Error copiando al portapapeles:', err);
+                    mostrarResultado('Error al copiar: ' + (err && err.message ? err.message : err), 'error', '❌');
+
+                    // Restaurar estado en caso de error
+                    if (btnCopiar) btnCopiar.disabled = false;
+                    if (btnIcon) {
+                        btnIcon.classList.remove('animate-spin');
+                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
+                    }
+                    if (btnText) btnText.textContent = 'Copiar';
+                }
+            }
+
+            // Eliminar funciones de menú y PDF, simplificar descarga a solo PNG
+            function descargarBraille() {
+                const textoBraille = (ultimaTraduccionBraille || '').trim();
+                if (!textoBraille) {
+                    mostrarResultado('No hay traducción Braille para descargar', 'error', '⚠️');
+                    return;
+                }
+                generarPNGBraille(textoBraille);
+            }
+
+            // Mantener generarPNGBraille existente
+            function generarPNGBraille(texto) {
+                try {
+                    const padding = 40;
+                    let fontSize = 150; // grande para visibilidad
+
+                    // Medidas iniciales
+                    let width = 1200; // ancho base
+                    const ctxMeasure = document.createElement('canvas').getContext('2d');
+                    ctxMeasure.font = fontSize + 'px Arial';
+
+                    // Partir en líneas por ancho disponible
+                    const maxLineWidth = width - padding * 2;
+                    const lines = [];
+                    let current = '';
+                    for (const ch of texto) {
+                        const test = current + ch;
+                        const testWidth = ctxMeasure.measureText(test).width;
+                        if (testWidth > maxLineWidth && current.length > 0) {
+                            lines.push(current);
+                            current = ch;
+                        } else {
+                            current = test;
+                        }
+                    }
+                    if (current) lines.push(current);
+
+                    // Calcular alto y ajustar fontSize si se excede
+                    let lineHeight = Math.floor(fontSize * 1.4);
+                    let height = padding * 2 + lineHeight * lines.length;
+
+                    // Si el alto es muy grande, reducir fontSize proporcionalmente
+                    const maxHeight = 1600; // límite para evitar imágenes demasiado altas
+                    if (height > maxHeight) {
+                        const scale = maxHeight / height;
+                        fontSize = Math.max(24, Math.floor(fontSize * scale));
+                        lineHeight = Math.floor(fontSize * 1.4);
+                        height = padding * 2 + lineHeight * lines.length;
+                    }
+
+                    // Crear canvas final
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+
+                    // Fondo blanco
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Configurar texto braille
+                    ctx.fillStyle = '#111827';
+                    ctx.font = fontSize + 'px Arial';
+                    ctx.textBaseline = 'top';
+
+                    // Dibujar líneas centradas
+                    let y = padding;
+                    lines.forEach(l => {
+                        const textWidth = ctx.measureText(l).width;
+                        const x = padding + (maxLineWidth - textWidth) / 2;
+                        ctx.fillText(l, x, y);
+                        y += lineHeight;
+                    });
+
+                    // Descargar
+                    const link = document.createElement('a');
+                    link.download = 'senaletica-braille.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    // No sobrescribir el resultado mostrado con mensajes de éxito para no perder el Braille
+                } catch (e) {
+                    console.error(e);
+                    mostrarResultado('Error generando PNG: ' + e.message, 'error', '❌');
+                }
+            }
+
+            function roundRect(ctx, x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+            }
         </script>
     </body>
 
     </html>
+
