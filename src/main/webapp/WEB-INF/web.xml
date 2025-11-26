@@ -4,18 +4,21 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
     <display-name>Braille Web Application</display-name>
+    
+    <!-- Welcome file configuration - now points to index.jsp -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+    
     <servlet>
-    <servlet-name>HelloController</servlet-name>
-    <servlet-class>servlet.HelloController</servlet-class>
-    <load-on-startup>1</load-on-startup>
+        <servlet-name>ControladorBraille</servlet-name>
+        <servlet-class>servlet.ControladorBraille</servlet-class>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
-    <servlet-name>HelloController</servlet-name>
-    <url-pattern>/hello</url-pattern>
+        <servlet-name>ControladorBraille</servlet-name>
+        <url-pattern>/api/traducir</url-pattern>
     </servlet-mapping>
 
 </web-app>
