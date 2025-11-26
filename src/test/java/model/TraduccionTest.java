@@ -56,10 +56,8 @@ class TraduccionTest {
         void debeTraducirTextoSimple() {
             // Arrange
             Traduccion traduccion = Traduccion.crear("hola", DireccionTraduccion.ESPANOL_A_BRAILLE);
-
             // Act
             traduccion.ejecutar();
-
             // Assert
             assertTrue(traduccion.estaCompletada());
             assertNotNull(traduccion.getTextoTraducido());
@@ -147,11 +145,36 @@ class TraduccionTest {
             assertEquals(textoBrailleEsperado, traduccion.getTextoTraducido(),
                     "La traducción de '" + textoEspanol + "' con números no coincide");
         }
+
+        @ParameterizedTest
+        @CsvSource({
+            "José, ⠠⠚⠕⠎⠮",
+            "María, ⠠⠍⠁⠗⠌⠁",
+            "bebé, ⠃⠑⠃⠮",
+            "papá, ⠏⠁⠏⠷",
+            "Ramón, ⠠⠗⠁⠍⠬⠝",
+            "Raúl, ⠠⠗⠁⠾⠇",
+            "pingüino, ⠏⠊⠝⠛⠳⠊⠝⠕"
+        })
+        @DisplayName("Debe traducir palabras con vocales acentuadas y caracteres especiales")
+        void debeTraducirPalabrasConCaracteresEspeciales(String textoEspanol, String textoBrailleEsperado) {
+            // Arrange
+            Traduccion traduccion = Traduccion.crear(textoEspanol, DireccionTraduccion.ESPANOL_A_BRAILLE);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals(textoBrailleEsperado, traduccion.getTextoTraducido(),
+                    "La traducción de '" + textoEspanol + "' con caracteres especiales no coincide");
+        }
+
     }
 
     @Nested
     @DisplayName("Traducción Braille → Español")
     class TraduccionBrailleAEspanol {
+
 
         @Test
         @DisplayName("Debe traducir '⠓⠕⠇⠁' exactamente a 'hola'")
