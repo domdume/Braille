@@ -586,32 +586,68 @@
                     mostrarResultado('No hay traducción Braille para descargar', 'error', '⚠️');
                     return;
                 }
-
-                const resultado = document.getElementById('resultado');
-                const contenido = resultado ? resultado.querySelector('.p-6') : null;
-                if (!resultado || resultado.classList.contains('hidden') || !contenido) {
-                    mostrarResultado('No hay vista de resultado para exportar', 'error', '⚠️');
-                    return;
-                }
-
                 if (!window.html2canvas) {
                     mostrarResultado('Biblioteca de exportación no disponible', 'error', '❌');
                     return;
                 }
 
-                try {
-                    setDescargaEnProceso(true);
+                setDescargaEnProceso(true);
 
-                    const canvas = await html2canvas(contenido, {
-                        backgroundColor: '#ffffff',
-                        scale: window.devicePixelRatio > 1 ? 2 : 1.5,
-                        useCORS: true
+                try {
+                    // Crea un contenedor fuera de pantalla SOLO con el texto Braille
+                    const exporter = document.createElement('div');
+                    exporter.id = 'braille-exporter';
+
+                    // Configura un lienzo grande para impresión (aprox. A4 a 300dpi: 2480px de ancho)
+                    // - Solo texto negro sobre fondo blanco
+                    // - Sin bordes, sin emojis, sin UI
+                    // - Texto grande y legible, con envoltura de línea
+                    Object.assign(exporter.style, {
+                        position: 'fixed',
+                        left: '-99999px',
+                        top: '0',
+                        width: '2480px',        // ancho grande para impresión
+                        background: '#ffffff',
+                        color: '#000000',
+                        padding: '80px',
+                        boxSizing: 'border-box',
+                        textAlign: 'center',
+                        whiteSpace: 'pre-wrap',
+                        wordWrap: 'break-word',
+                        overflowWrap: 'break-word',
+                        // Fuentes con soporte para el bloque Unicode de Braille en Windows
+                        fontFamily: "'Segoe UI Symbol','Arial Unicode MS',system-ui,sans-serif",
+                        // Tamaño base grande; se ajusta un poco según longitud
+                        lineHeight: '1.12',
+                        letterSpacing: '8px'
                     });
 
+                    // Ajuste simple de tamaño según longitud para mantenerlo grande y que quepa
+                    const len = textoBraille.length;
+                    let fontSize = 220;     // muy grande por defecto
+                    if (len > 40) fontSize = 180;
+                    if (len > 80) fontSize = 140;
+                    if (len > 140) fontSize = 110;
+                    exporter.style.fontSize = fontSize + 'px';
+
+                    exporter.textContent = textoBraille;
+                    document.body.appendChild(exporter);
+
+                    // Renderiza a alta resolución
+                    const scale = Math.max(2, Math.ceil(window.devicePixelRatio || 1));
+                    const canvas = await html2canvas(exporter, {
+                        backgroundColor: '#ffffff',
+                        scale: scale
+                    });
+
+                    // Descarga el PNG
                     const enlace = document.createElement('a');
                     enlace.href = canvas.toDataURL('image/png');
-                    enlace.download = 'traduccion-braille.png';
+                    enlace.download = 'senaletica-braille.png';
                     enlace.click();
+
+                    // Limpieza
+                    document.body.removeChild(exporter);
                 } catch (error) {
                     console.error('Error generando PNG:', error);
                     mostrarResultado('No se pudo generar el PNG: ' + (error && error.message ? error.message : error), 'error', '❌');
