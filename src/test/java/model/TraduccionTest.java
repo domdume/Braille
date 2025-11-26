@@ -221,5 +221,27 @@ class TraduccionTest {
         assertEquals("⠨⠙⠨⠕⠨⠍⠨⠑⠤⠼⠁⠃⠉", resultado, "La traducción del signo 'DOME-123' no coincide");
     }
 
+    @Test
+    @DisplayName("Debe preservar el salto de línea durante la traducción")
+    void debePreservarSaltoDeLinea() {
+        // Arrange
+        String textoOriginal = "hola\nmundo";
+        DireccionTraduccion direccion = DireccionTraduccion.ESPANOL_A_BRAILLE;
+
+        // Act
+        Traduccion traduccion = Traduccion.crear(textoOriginal, direccion);
+        traduccion.ejecutar();
+        String resultado = traduccion.getTextoTraducido();
+
+        // Assert
+        assertNotNull(resultado);
+        assertTrue(resultado.contains("\n"), "La traducción debe conservar el salto de línea");
+
+        // Si quieres validar la traducción exacta, usa esto:
+        String esperado = "⠓⠕⠇⠁\n⠍⠥⠝⠙⠕";
+        assertEquals(esperado, resultado);
+    }
+
+
 
 }
