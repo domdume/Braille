@@ -7,7 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Traductor Braille - Sistema de Traducción Bidireccional</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+        <!-- Librería para capturar el contenido del resultado tal cual se ve en pantalla -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
         <script>
             tailwind.config = {
@@ -188,13 +189,13 @@
 
                             <!-- Botón Descargar directo a PNG -->
                             <div class="col-span-1">
-                                <button type="button" id="btnDescargar"
-                                        class="w-full border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200"
-                                        onclick="descargarBraille()">
-                                    <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <button type="button" id="btnDescargar" disabled
+                                        class="w-full border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200 opacity-50 cursor-not-allowed"
+                                        onclick="descargarBraillePng()">
+                                    <svg id="btnIconDescargar" class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
                                     </svg>
-                                    <span class="font-semibold">Descargar PNG</span>
+                                    <span id="btnTextDescargar" class="font-semibold">Descargar PNG</span>
                                 </button>
                             </div>
                         </div>
@@ -239,14 +240,19 @@
                     </div>
                 </form>
 
+                <!-- Etiqueta de resultado (fuera de la caja) -->
+                <div id="resultadoEtiqueta" class="hidden inline-flex items-center px-3 py-1 mb-2 mt-6 rounded-full bg-primary-50 border border-primary-100 text-xs font-semibold uppercase tracking-wide text-primary-700">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary-500 mr-2"></span>
+                    Resultado de la traducción
+                </div>
+
                 <!-- Result Section -->
-                <div id="resultado" class="mt-8 hidden">
+                <div id="resultado" class="mt-2 hidden">
                     <div class="p-6 rounded-xl border-2">
                         <div class="flex items-start space-x-3">
                             <span id="resultEmoji" class="text-3xl"></span>
                             <div class="flex-1">
-                                <p class="text-sm font-semibold text-gray-600 mb-2">Resultado:</p>
-                                <p id="resultText" class="text-xl font-medium break-words select-all"></p>
+                                 <p id="resultText" class="text-xl font-medium break-words select-all"></p>
                             </div>
                         </div>
                     </div>
@@ -320,11 +326,20 @@
             document.addEventListener('DOMContentLoaded', function () {
                 actualizarContador();
                 actualizarPlaceholder();
+                actualizarEstadoDescarga();
 
                 // Event listeners
-                document.getElementById('texto').addEventListener('input', actualizarContador);
+                document.getElementById('texto').addEventListener('input', () => {
+                    actualizarContador();
+                    ultimaTraduccionBraille = '';
+                    actualizarEstadoDescarga();
+                });
                 document.querySelectorAll('input[name="direccion"]').forEach(radio => {
-                    radio.addEventListener('change', actualizarPlaceholder);
+                    radio.addEventListener('change', () => {
+                        actualizarPlaceholder();
+                        ultimaTraduccionBraille = '';
+                        actualizarEstadoDescarga();
+                    });
                 });
 
                 // Atajo de teclado Ctrl+Enter
@@ -365,6 +380,7 @@
             // Mostrar resultado
             function mostrarResultado(texto, tipo, emoji) {
                 const resultado = document.getElementById('resultado');
+                const resultadoEtiqueta = document.getElementById('resultadoEtiqueta');
                 const resultText = document.getElementById('resultText');
                 const resultEmoji = document.getElementById('resultEmoji');
                 const resultDiv = resultado.querySelector('div');
@@ -372,6 +388,9 @@
                 resultText.textContent = texto;
                 resultEmoji.textContent = emoji;
                 resultado.classList.remove('hidden');
+                if (resultadoEtiqueta) {
+                    resultadoEtiqueta.classList.remove('hidden');
+                }
 
                 // Aplicar estilos según tipo
                 resultDiv.className = 'p-6 rounded-xl border-2 ';
@@ -398,6 +417,8 @@
                 const btnText = document.getElementById('btnText');
                 const btnIcon = document.getElementById('btnIcon');
 
+                ultimaTraduccionBraille = '';
+
                 // Validación
                 if (!texto) {
                     mostrarResultado('Por favor ingresa un texto para traducir', 'error', '⚠️');
@@ -407,8 +428,6 @@
                 // Deshabilitar botón y mostrar loading
                 btnTraducir.disabled = true;
                 btnTraducir.classList.add('opacity-75', 'cursor-not-allowed');
-                btnIcon.innerHTML = '<animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>';
-                btnIcon.innerHTML = '';
                 btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
                 btnIcon.classList.add('animate-spin');
                 btnText.textContent = 'Traduciendo...';
@@ -435,14 +454,21 @@
                         // Guardar la traducción Braille solo si la dirección es Español -> Braille
                         if (direccion === 'ESPANOL_A_BRAILLE') {
                             ultimaTraduccionBraille = data.textoTraducido || '';
+                        } else {
+                            ultimaTraduccionBraille = '';
                         }
+                        actualizarEstadoDescarga();
                     } else {
                         mostrarResultado(data.error || 'Error desconocido', 'error', '❌');
+                        ultimaTraduccionBraille = '';
+                        actualizarEstadoDescarga();
                     }
 
                 } catch (error) {
                     console.error('Error:', error);
                     mostrarResultado('Error de conexión: ' + error.message, 'error', '❌');
+                    ultimaTraduccionBraille = '';
+                    actualizarEstadoDescarga();
                 } finally {
                     // Rehabilitar botón
                     btnTraducir.disabled = false;
@@ -457,15 +483,20 @@
             function limpiar() {
                 document.getElementById('texto').value = '';
                 document.getElementById('resultado').classList.add('hidden');
+                const resultadoEtiqueta = document.getElementById('resultadoEtiqueta');
+                if (resultadoEtiqueta) {
+                    resultadoEtiqueta.classList.add('hidden');
+                }
                 actualizarContador();
                 document.getElementById('texto').focus();
+                ultimaTraduccionBraille = '';
+                actualizarEstadoDescarga();
             }
 
             // Copiar resultado al portapapeles
             async function copiar() {
                 const resultTextEl = document.getElementById('resultText');
                 const btnCopiar = document.getElementById('btnCopiar');
-                const btnIcon = document.getElementById('btnIconCopiar');
                 const btnText = document.getElementById('btnTextCopiar');
 
                 const texto = resultTextEl ? resultTextEl.textContent.trim() : '';
@@ -476,8 +507,6 @@
                     return;
                 }
 
-                // Guardar estado anterior para restaurar después
-                const prevIcon = btnIcon ? btnIcon.innerHTML : '';
                 const prevText = btnText ? btnText.textContent : '';
 
                 try {
@@ -485,11 +514,6 @@
                         btnCopiar.disabled = true;
                     }
 
-                    if (btnIcon) {
-                        // Mostrar spinner pequeño
-                        btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
-                        btnIcon.classList.add('animate-spin');
-                    }
                     if (btnText) btnText.textContent = 'Copiando...';
 
                     // Intentar usar Clipboard API
@@ -511,16 +535,10 @@
                         }
                     }
 
-                    // Feedback de éxito
-                    if (btnIcon) {
-                        btnIcon.classList.remove('animate-spin');
-                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
-                    }
                     if (btnText) btnText.textContent = 'Copiado';
 
                     // Restaurar después de un momento
                     setTimeout(() => {
-                        if (btnIcon) btnIcon.innerHTML = prevIcon;
                         if (btnText) btnText.textContent = prevText;
                         if (btnCopiar) btnCopiar.disabled = false;
                     }, 1800);
@@ -531,112 +549,75 @@
 
                     // Restaurar estado en caso de error
                     if (btnCopiar) btnCopiar.disabled = false;
-                    if (btnIcon) {
-                        btnIcon.classList.remove('animate-spin');
-                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
-                    }
                     if (btnText) btnText.textContent = 'Copiar';
                 }
             }
 
-            // Eliminar funciones de menú y PDF, simplificar descarga a solo PNG
-            function descargarBraille() {
+            // Botón de descarga: habilitado solo si hay traducción Braille reciente
+            function actualizarEstadoDescarga() {
+                const btnDescargar = document.getElementById('btnDescargar');
+                if (!btnDescargar) return;
+                const habilitado = !!ultimaTraduccionBraille;
+                btnDescargar.disabled = !habilitado;
+                btnDescargar.classList.toggle('opacity-50', !habilitado);
+                btnDescargar.classList.toggle('cursor-not-allowed', !habilitado);
+            }
+
+            // Estado visual del botón Descargar mientras se genera la imagen
+            function setDescargaEnProceso(enProceso) {
+                const btn = document.getElementById('btnDescargar');
+                if (!btn) return;
+                btn.disabled = enProceso || !ultimaTraduccionBraille;
+                btn.classList.toggle('opacity-75', enProceso);
+                btn.classList.toggle('cursor-wait', enProceso);
+                btn.classList.toggle('opacity-50', !ultimaTraduccionBraille);
+                btn.classList.toggle('cursor-not-allowed', !ultimaTraduccionBraille && !enProceso);
+                if (enProceso) {
+                    btn.innerHTML = '<span class="font-semibold">Generando PNG...</span>';
+                } else {
+                    btn.innerHTML = '<svg id="btnIconDescargar" class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path></svg><span id="btnTextDescargar" class="font-semibold">Descargar PNG</span>';
+                }
+            }
+
+            // Descargar captura PNG del cuadro de resultado
+            async function descargarBraillePng() {
                 const textoBraille = (ultimaTraduccionBraille || '').trim();
                 if (!textoBraille) {
                     mostrarResultado('No hay traducción Braille para descargar', 'error', '⚠️');
                     return;
                 }
-                generarPNGBraille(textoBraille);
-            }
 
-            // Mantener generarPNGBraille existente
-            function generarPNGBraille(texto) {
+                const resultado = document.getElementById('resultado');
+                const contenido = resultado ? resultado.querySelector('.p-6') : null;
+                if (!resultado || resultado.classList.contains('hidden') || !contenido) {
+                    mostrarResultado('No hay vista de resultado para exportar', 'error', '⚠️');
+                    return;
+                }
+
+                if (!window.html2canvas) {
+                    mostrarResultado('Biblioteca de exportación no disponible', 'error', '❌');
+                    return;
+                }
+
                 try {
-                    const padding = 40;
-                    let fontSize = 150; // grande para visibilidad
+                    setDescargaEnProceso(true);
 
-                    // Medidas iniciales
-                    let width = 1200; // ancho base
-                    const ctxMeasure = document.createElement('canvas').getContext('2d');
-                    ctxMeasure.font = fontSize + 'px Arial';
-
-                    // Partir en líneas por ancho disponible
-                    const maxLineWidth = width - padding * 2;
-                    const lines = [];
-                    let current = '';
-                    for (const ch of texto) {
-                        const test = current + ch;
-                        const testWidth = ctxMeasure.measureText(test).width;
-                        if (testWidth > maxLineWidth && current.length > 0) {
-                            lines.push(current);
-                            current = ch;
-                        } else {
-                            current = test;
-                        }
-                    }
-                    if (current) lines.push(current);
-
-                    // Calcular alto y ajustar fontSize si se excede
-                    let lineHeight = Math.floor(fontSize * 1.4);
-                    let height = padding * 2 + lineHeight * lines.length;
-
-                    // Si el alto es muy grande, reducir fontSize proporcionalmente
-                    const maxHeight = 1600; // límite para evitar imágenes demasiado altas
-                    if (height > maxHeight) {
-                        const scale = maxHeight / height;
-                        fontSize = Math.max(24, Math.floor(fontSize * scale));
-                        lineHeight = Math.floor(fontSize * 1.4);
-                        height = padding * 2 + lineHeight * lines.length;
-                    }
-
-                    // Crear canvas final
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-
-                    // Fondo blanco
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, width, height);
-
-                    // Configurar texto braille
-                    ctx.fillStyle = '#111827';
-                    ctx.font = fontSize + 'px Arial';
-                    ctx.textBaseline = 'top';
-
-                    // Dibujar líneas centradas
-                    let y = padding;
-                    lines.forEach(l => {
-                        const textWidth = ctx.measureText(l).width;
-                        const x = padding + (maxLineWidth - textWidth) / 2;
-                        ctx.fillText(l, x, y);
-                        y += lineHeight;
+                    const canvas = await html2canvas(contenido, {
+                        backgroundColor: '#ffffff',
+                        scale: window.devicePixelRatio > 1 ? 2 : 1.5,
+                        useCORS: true
                     });
 
-                    // Descargar
-                    const link = document.createElement('a');
-                    link.download = 'senaletica-braille.png';
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-                    // No sobrescribir el resultado mostrado con mensajes de éxito para no perder el Braille
-                } catch (e) {
-                    console.error(e);
-                    mostrarResultado('Error generando PNG: ' + e.message, 'error', '❌');
+                    const enlace = document.createElement('a');
+                    enlace.href = canvas.toDataURL('image/png');
+                    enlace.download = 'traduccion-braille.png';
+                    enlace.click();
+                } catch (error) {
+                    console.error('Error generando PNG:', error);
+                    mostrarResultado('No se pudo generar el PNG: ' + (error && error.message ? error.message : error), 'error', '❌');
+                } finally {
+                    setDescargaEnProceso(false);
                 }
-            }
-
-            function roundRect(ctx, x, y, w, h, r) {
-                ctx.beginPath();
-                ctx.moveTo(x + r, y);
-                ctx.lineTo(x + w - r, y);
-                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-                ctx.lineTo(x + w, y + h - r);
-                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-                ctx.lineTo(x + r, y + h);
-                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-                ctx.lineTo(x, y + r);
-                ctx.quadraticCurveTo(x, y, x + r, y);
-                ctx.closePath();
             }
         </script>
     </body>
