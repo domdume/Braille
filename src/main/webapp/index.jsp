@@ -167,19 +167,14 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">
                             Dirección de traducción
                         </label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="direccion" value="ESPANOL_A_BRAILLE" checked
-                                    class="peer sr-only">
-                                <div
-                                    class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300">
+                        <div class="grid grid-cols-3 gap-4">
+                            <label class="relative cursor-pointer col-span-2">
+                                <input type="radio" name="direccion" value="ESPANOL_A_BRAILLE" checked class="peer sr-only">
+                                <div class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-2xl">🔤</span>
-                                        <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100"
-                                            fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd"></path>
+                                        <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
                                         </svg>
                                     </div>
                                     <p class="font-semibold text-gray-800">Español → Braille</p>
@@ -187,24 +182,14 @@
                                 </div>
                             </label>
 
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="direccion" value="BRAILLE_A_ESPANOL" class="peer sr-only">
-                                <div
-                                    class="border-2 border-gray-200 peer-checked:border-accent-500 peer-checked:bg-accent-50 rounded-xl p-4 transition-all duration-200 hover:border-accent-300">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-2xl">⠃</span>
-                                        <svg class="w-5 h-5 text-accent-600 opacity-0 peer-checked:opacity-100"
-                                            fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd"
-                                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <p class="font-semibold text-gray-800">Braille → Español</p>
-                                    <p class="text-xs text-gray-500 mt-1">Convierte Braille a texto</p>
-                                </div>
-                            </label>
+                            <button type="button" class="col-span-1 border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200">
+                                <svg class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
+                                </svg>
+                                <span class="font-semibold">Descargar</span>
+                            </button>
                         </div>
+
                     </div>
 
                     <!-- Text Input -->
@@ -257,7 +242,17 @@
                         </div>
                     </div>
                 </div>
+
+                <!--BOTON COPIAR-->
+                <div class="flex gap-4 mt-8">
+                    <button type="button" onclick="copiar()" id="btnCopiar"
+                            class="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                        <span id="btnTextCopiar">Copiar</span>
+                    </button>
+                </div>
+
             </div>
+
 
             <!-- Additional Info Section -->
             <div class="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-6">
@@ -426,8 +421,7 @@
                     const data = await response.json();
 
                     if (data.exito) {
-                        const emoji = direccion === 'ESPANOL_A_BRAILLE' ? '⠃' : '🔤';
-                        mostrarResultado(data.textoTraducido, 'success', emoji);
+                        mostrarResultado(data.textoTraducido, 'success', '');
                     } else {
                         mostrarResultado(data.error || 'Error desconocido', 'error', '❌');
                     }
@@ -451,6 +445,84 @@
                 document.getElementById('resultado').classList.add('hidden');
                 actualizarContador();
                 document.getElementById('texto').focus();
+            }
+
+            // Copiar resultado al portapapeles
+            async function copiar() {
+                const resultTextEl = document.getElementById('resultText');
+                const btnCopiar = document.getElementById('btnCopiar');
+                const btnIcon = document.getElementById('btnIconCopiar');
+                const btnText = document.getElementById('btnTextCopiar');
+
+                const texto = resultTextEl ? resultTextEl.textContent.trim() : '';
+
+                if (!texto) {
+                    // Mostrar mensaje de error si no hay nada que copiar
+                    mostrarResultado('No hay texto para copiar', 'error', '⚠️');
+                    return;
+                }
+
+                // Guardar estado anterior para restaurar después
+                const prevIcon = btnIcon ? btnIcon.innerHTML : '';
+                const prevText = btnText ? btnText.textContent : '';
+
+                try {
+                    if (btnCopiar) {
+                        btnCopiar.disabled = true;
+                    }
+
+                    if (btnIcon) {
+                        // Mostrar spinner pequeño
+                        btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
+                        btnIcon.classList.add('animate-spin');
+                    }
+                    if (btnText) btnText.textContent = 'Copiando...';
+
+                    // Intentar usar Clipboard API
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        await navigator.clipboard.writeText(texto);
+                    } else {
+                        // Fallback para navegadores antiguos
+                        const textarea = document.createElement('textarea');
+                        textarea.value = texto;
+                        textarea.setAttribute('readonly', '');
+                        textarea.style.position = 'absolute';
+                        textarea.style.left = '-9999px';
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        try {
+                            document.execCommand('copy');
+                        } finally {
+                            document.body.removeChild(textarea);
+                        }
+                    }
+
+                    // Feedback de éxito
+                    if (btnIcon) {
+                        btnIcon.classList.remove('animate-spin');
+                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                    }
+                    if (btnText) btnText.textContent = 'Copiado';
+
+                    // Restaurar después de un momento
+                    setTimeout(() => {
+                        if (btnIcon) btnIcon.innerHTML = prevIcon;
+                        if (btnText) btnText.textContent = prevText;
+                        if (btnCopiar) btnCopiar.disabled = false;
+                    }, 1800);
+
+                } catch (err) {
+                    console.error('Error copiando al portapapeles:', err);
+                    mostrarResultado('Error al copiar: ' + (err && err.message ? err.message : err), 'error', '❌');
+
+                    // Restaurar estado en caso de error
+                    if (btnCopiar) btnCopiar.disabled = false;
+                    if (btnIcon) {
+                        btnIcon.classList.remove('animate-spin');
+                        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>';
+                    }
+                    if (btnText) btnText.textContent = 'Copiar';
+                }
             }
         </script>
     </body>
