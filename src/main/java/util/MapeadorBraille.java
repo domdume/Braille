@@ -103,15 +103,8 @@ public class MapeadorBraille {
      */
     private static final String SIGNO_NUMERO = "⠼";
     
-    /** 
-     * Símbolo especial Braille (⠠) que indica que la siguiente letra es mayúscula.
-     * 
-     * <p>Este prefijo solo afecta a UNA letra. Para escribir varias mayúsculas
-     * consecutivas, el signo debe repetirse antes de cada letra mayúscula.</p>
-     * 
-     * <p>Unicode: U+2820 (punto 6)</p>
-     */
-    private static final String SIGNO_MAYUSCULA = "⠠";
+    // Símbolo para mayúsculas
+    private static final String SIGNO_MAYUSCULA = "⠨";
     
     /** 
      * Mapeo de letras minúsculas españolas a sus representaciones Braille Unicode.
@@ -244,16 +237,22 @@ public class MapeadorBraille {
         NUMERO_A_BRAILLE.put('9', "⠊"); 
         
         // Puntuación
-        PUNTUACION_A_BRAILLE.put('.', "⠲");
+        PUNTUACION_A_BRAILLE.put('.', "⠄");
         PUNTUACION_A_BRAILLE.put(',', "⠂");
         PUNTUACION_A_BRAILLE.put(';', "⠆");
         PUNTUACION_A_BRAILLE.put(':', "⠒");
         PUNTUACION_A_BRAILLE.put('?', "⠢");
+        PUNTUACION_A_BRAILLE.put('¿', "⠢");
         PUNTUACION_A_BRAILLE.put('!', "⠖");
         PUNTUACION_A_BRAILLE.put('-', "⠤");
-        PUNTUACION_A_BRAILLE.put('(', "⠐⠣");
-        PUNTUACION_A_BRAILLE.put(')', "⠐⠜");
-        PUNTUACION_A_BRAILLE.put('"', "⠦");
+        PUNTUACION_A_BRAILLE.put('(', "⠣");
+        PUNTUACION_A_BRAILLE.put(')', "⠜");
+        PUNTUACION_A_BRAILLE.put('"', "⠶");
+        PUNTUACION_A_BRAILLE.put('_', "⠤");
+        PUNTUACION_A_BRAILLE.put('+', "⠖");
+        PUNTUACION_A_BRAILLE.put('=', "⠶");
+        PUNTUACION_A_BRAILLE.put('÷', "⠦");
+        PUNTUACION_A_BRAILLE.put('x', "⠲");
         
         // Crear mapeos inversos
         for (Map.Entry<Character, String> entry : LETRA_A_BRAILLE.entrySet()) {

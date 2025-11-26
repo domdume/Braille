@@ -112,7 +112,7 @@ class TraduccionTest {
             "café, ⠉⠁⠋⠮",
             "niño, ⠝⠊⠻⠕",
             "a, ⠁",
-            "España, ⠠⠑⠎⠏⠁⠻⠁"
+            "España, ⠨⠑⠎⠏⠁⠻⠁"
         })
         @DisplayName("Debe traducir palabras españolas a Braille correctamente")
         void debeTraducirPalabrasEspanolABrailleExacto(String textoEspanol, String textoBrailleEsperado) {
@@ -190,4 +190,36 @@ class TraduccionTest {
             assertEquals("hola", traduccion.getTextoTraducido());
         }
     }
+
+    @Test
+    @DisplayName("Debe traducir el signo '=' correctamente a Braille")
+    void debeTraducirSignoIgual() {
+        // Arrange
+        String textoOriginal = "=";
+        DireccionTraduccion direccion = DireccionTraduccion.ESPANOL_A_BRAILLE;
+
+        // Act
+        Traduccion traduccion = Traduccion.crear(textoOriginal, direccion);
+        traduccion.ejecutar();
+        String resultado = traduccion.getTextoTraducido();
+
+        // Assert
+        assertEquals("⠶", resultado, "La traducción del signo '=' no coincide");
+    }
+    @Test
+    void debeTraducirMayusculasYNumerosBien() {
+        // Arrange
+        String textoOriginal = "DOME-123";
+        DireccionTraduccion direccion = DireccionTraduccion.ESPANOL_A_BRAILLE;
+
+        // Act
+        Traduccion traduccion = Traduccion.crear(textoOriginal, direccion);
+        traduccion.ejecutar();
+        String resultado = traduccion.getTextoTraducido();
+
+        // Assert
+        assertEquals("⠨⠙⠨⠕⠨⠍⠨⠑⠤⠼⠁⠃⠉", resultado, "La traducción del signo 'DOME-123' no coincide");
+    }
+
+
 }
