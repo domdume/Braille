@@ -31,5 +31,11 @@ public enum DireccionTraduccion {
      * Convierte símbolos Braille Unicode a caracteres
      * alfabéticos, numéricos y de puntuación en español.
      */
-    BRAILLE_A_ESPANOL
+    BRAILLE_A_ESPANOL,
+
+    /**
+     * Traducción de texto en español a representación Braille con efecto espejo.
+     * Útil para la escritura manual con punzón y regleta (perforación de derecha a izquierda).
+     */
+    ESPANOL_A_BRAILLE_ESPEJO
 }

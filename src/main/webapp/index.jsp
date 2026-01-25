@@ -7,6 +7,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Traductor Braille - Sistema de Traducción Bidireccional</title>
         <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Tesseract.js para OCR -->
+        <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
         <!-- Librería para capturar el contenido del resultado tal cual se ve en pantalla -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
         <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
@@ -90,52 +92,41 @@
                 </p>
             </div>
 
-            <!-- Features Cards -->
-            <div class="grid md:grid-cols-2 gap-6 mb-12 animate-slide-up">
-                <!-- Feature 1 -->
-                <div
-                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
+            <!-- Additional Info Section -->
+            <div class="max-w-5xl mx-auto mb-12 grid md:grid-cols-2 gap-6 animate-slide-up">
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <svg class="w-6 h-6 text-primary-500 mr-2" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
                             </path>
                         </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Alfabeto Completo</h3>
-                    <p class="text-gray-600">Letras A-Z, Ñ y vocales acentuadas (á, é, í, ó, ú)
-                    </p>
+                        ¿Cómo usar?
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+                        <li>Selecciona la dirección de traducción</li>
+                        <li>Escribe o pega tu texto</li>
+                        <li>Haz clic en "Traducir"</li>
+                        <li>Pulsa "Descargar PNG" para obtener la señalética</li>
+                    </ol>
+                    <p class="text-xs text-gray-500 mt-4">💡 Atajo: Ctrl + Enter para traducir</p>
                 </div>
 
-                <!-- Feature 2 -->
-                <div
-                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
-                    <div
-                        class="w-14 h-14 bg-gradient-to-br from-accent-100 to-accent-200 rounded-xl flex items-center justify-center mb-4">
-                        <svg class="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                        <svg class="w-6 h-6 text-accent-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                            </path>
                         </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Números y Símbolos</h3>
-                    <p class="text-gray-600">Números 0-9 y signos de puntuación con indicadores especiales</p>
+                        Sobre Braille
+                    </h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        El sistema Braille es un método de lectura y escritura táctil utilizado por personas con
+                        discapacidad visual.
+                        Consiste en combinaciones de puntos en relieve que representan letras, números y símbolos.
+                    </p>
                 </div>
-                <%--
-                                <!-- Feature 3 -->
-                                <div
-                                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
-                                    <div
-                                        class="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center mb-4">
-                                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">Tiempo Real</h3>
-                                    <p class="text-gray-600">Traducción bidireccional instantánea con validación inteligente</p>
-                                </div>
-                                --%>
             </div>
 
             <!-- Translator Section -->
@@ -172,10 +163,10 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-3">
                             Dirección de traducción
                         </label>
-                        <div class="grid grid-cols-3 gap-4">
-                            <label class="relative cursor-pointer col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <label class="relative cursor-pointer">
                                 <input type="radio" name="direccion" value="ESPANOL_A_BRAILLE" checked class="peer sr-only">
-                                <div class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300">
+                                <div class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300 h-full">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-2xl">🔤</span>
                                         <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
@@ -183,20 +174,53 @@
                                         </svg>
                                     </div>
                                     <p class="font-semibold text-gray-800">Español → Braille</p>
-                                    <p class="text-xs text-gray-500 mt-1">Convierte texto a Braille Unicode</p>
+                                    <p class="text-xs text-gray-500 mt-1">Normal</p>
                                 </div>
                             </label>
 
-                            <!-- Botón Descargar directo a PNG -->
-                            <div class="col-span-1">
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="direccion" value="BRAILLE_A_ESPANOL" class="peer sr-only">
+                                <div class="border-2 border-gray-200 peer-checked:border-primary-500 peer-checked:bg-primary-50 rounded-xl p-4 transition-all duration-200 hover:border-primary-300 h-full">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-2xl">⠃</span>
+                                        <svg class="w-5 h-5 text-primary-600 opacity-0 peer-checked:opacity-100" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <p class="font-semibold text-gray-800">Braille → Español</p>
+                                    <p class="text-xs text-gray-500 mt-1">Transcripción</p>
+                                </div>
+                            </label>
+
+                            <button type="button" onclick="abrirCamara()"
+                                    class="border-2 border-dashed border-gray-300 rounded-xl p-4 transition-all duration-200 hover:border-accent-400 hover:bg-accent-50 flex flex-col items-center justify-center group h-full">
+                                <span class="text-2xl group-hover:scale-110 transition-transform">📷</span>
+                                <p class="font-semibold text-gray-800 mt-1">Usar Cámara</p>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">Traducir Foto</p>
+                            </button>
+
+                            <button type="button" onclick="document.getElementById('inputArchivo').click()"
+                                    class="border-2 border-dashed border-gray-300 rounded-xl p-4 transition-all duration-200 hover:border-primary-400 hover:bg-primary-50 flex flex-col items-center justify-center group h-full">
+                                <span class="text-2xl group-hover:scale-110 transition-transform">📁</span>
+                                <input type="file" id="inputArchivo" class="hidden" accept="image/*" onchange="procesarArchivoImagen(event)">
+                                <p class="font-semibold text-gray-800 mt-1">Subir Imagen</p>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">Cargar Archivo</p>
+                            </button>
+
+                            <div class="col-span-1 flex flex-col gap-2">
                                 <button type="button" id="btnDescargar" disabled
-                                        class="w-full border-2 border-gray-200 rounded-xl p-4 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200 opacity-50 cursor-not-allowed"
+                                        class="w-full flex-1 border-2 border-gray-200 rounded-xl p-3 flex flex-col items-center justify-center text-primary-600 hover:border-primary-300 transition-all duration-200 opacity-50 cursor-not-allowed"
                                         onclick="descargarBraillePng()">
-                                    <svg id="btnIconDescargar" class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg id="btnIconDescargar" class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path>
                                     </svg>
-                                    <span id="btnTextDescargar" class="font-semibold">Descargar PNG</span>
+                                    <span id="btnTextDescargar" class="font-semibold text-sm">Descargar PNG</span>
                                 </button>
+                                
+                                <label class="flex items-center justify-center space-x-2 cursor-pointer bg-gray-50 p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" id="checkEspejo" class="w-4 h-4 text-primary-600 rounded border-gray-300 focus:ring-primary-500">
+                                    <span class="text-[10px] font-bold text-gray-600 uppercase">Modo Espejo 🪞</span>
+                                </label>
                             </div>
                         </div>
 
@@ -228,6 +252,12 @@
                             <span id="btnText">Traducir</span>
                         </button>
 
+                        <button type="button" onclick="toggleTecladoBraille()" id="btnTecladoToggle"
+                            class="bg-accent-50 hover:bg-accent-100 text-accent-700 font-semibold py-4 px-6 rounded-xl border border-accent-200 transition-all duration-200 flex items-center justify-center space-x-2">
+                            <span class="text-xl">⠧</span>
+                            <span>Teclado Braille</span>
+                        </button>
+
                         <button type="button" onclick="limpiar()"
                             class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 px-8 rounded-xl transition-all duration-200 flex items-center justify-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,6 +267,41 @@
                             </svg>
                             <span>Limpiar</span>
                         </button>
+                    </div>
+
+                    <!-- Teclado Braille (Perkins Estilo) -->
+                    <div id="tecladoBraille" class="hidden mt-6 bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-200 animate-slide-up">
+                        <div class="text-center mb-4">
+                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Entrada de Puntos (Perkins)</h4>
+                            <p class="text-[10px] text-gray-500">Selecciona los puntos y pulsa 'Insertar'</p>
+                        </div>
+                        
+                        <div class="flex flex-col items-center space-y-4">
+                            <!-- Fila de Puntos -->
+                            <div class="grid grid-cols-2 gap-12">
+                                <div class="grid grid-cols-1 gap-4">
+                                    <button type="button" data-dot="1" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">1</button>
+                                    <button type="button" data-dot="2" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">2</button>
+                                    <button type="button" data-dot="3" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">3</button>
+                                </div>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <button type="button" data-dot="4" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">4</button>
+                                    <button type="button" data-dot="5" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">5</button>
+                                    <button type="button" data-dot="6" class="dot-btn w-12 h-12 rounded-full border-4 border-gray-300 bg-white hover:border-accent-400 transition-all flex items-center justify-center font-bold text-gray-400">6</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Acciones del Teclado -->
+                            <div class="flex gap-3 w-full max-w-xs">
+                                <button type="button" onclick="insertarCaracterBraille()" class="flex-1 bg-accent-600 hover:bg-accent-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">Insertar</button>
+                                <button type="button" onclick="limpiarPuntos()" class="px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 font-bold">X</button>
+                                <button type="button" onclick="insertarEspacioBraille()" class="px-6 py-3 bg-gray-200 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-300 font-bold">␣</button>
+                            </div>
+                            
+                            <div class="text-center">
+                                <span class="text-4xl font-braille text-primary-600" id="previewBrailleChar">⠀</span>
+                            </div>
+                        </div>
                     </div>
                 </form>
 
@@ -248,64 +313,102 @@
 
                 <!-- Result Section -->
                 <div id="resultado" class="mt-2 hidden">
-                    <div class="p-6 rounded-xl border-2">
+                    <div id="resultContainer" class="p-6 rounded-xl border-2">
                         <div class="flex items-start space-x-3">
                             <span id="resultEmoji" class="text-3xl"></span>
                             <div class="flex-1">
-                                 <p id="resultText" class="text-xl font-medium break-words select-all"></p>
+                                 <p id="resultText" class="text-2xl font-medium break-words select-all"></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!--BOTON COPIAR-->
-                <div class="flex gap-4 mt-8">
+                <div class="flex justify-center mt-6">
                     <button type="button" onclick="copiar()" id="btnCopiar"
-                            class="flex-1 bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
+                            class="bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-semibold py-2 px-8 rounded-full shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                        </svg>
                         <span id="btnTextCopiar">Copiar</span>
                     </button>
                 </div>
 
             </div>
 
-
-            <!-- Additional Info Section -->
-            <div class="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-6 h-6 text-primary-500 mr-2" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+            <!-- Features Cards (Al final) -->
+            <div class="max-w-5xl mx-auto mt-12 grid md:grid-cols-2 gap-6 animate-slide-up">
+                <!-- Feature 1 -->
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129">
                             </path>
                         </svg>
-                        ¿Cómo usar?
-                    </h3>
-                    <ol class="space-y-2 text-sm text-gray-600 list-decimal list-inside">
-                        <li>Selecciona la dirección de traducción</li>
-                        <li>Escribe o pega tu texto</li>
-                        <li>Haz clic en "Traducir"</li>
-                        <li>Pulsa "Descargar PNG" para obtener la señalética</li>
-                    </ol>
-                    <p class="text-xs text-gray-500 mt-4">💡 Atajo: Ctrl + Enter para traducir</p>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Alfabeto Completo</h3>
+                    <p class="text-gray-600">Letras A-Z, Ñ y vocales acentuadas (á, é, í, ó, ú)
+                    </p>
                 </div>
 
-                <div class="bg-white rounded-xl p-6 shadow-lg border border-gray-100">
-                    <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-                        <svg class="w-6 h-6 text-accent-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Feature 2 -->
+                <div
+                    class="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 hover:-translate-y-1">
+                    <div
+                        class="w-14 h-14 bg-gradient-to-br from-accent-100 to-accent-200 rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
-                            </path>
+                                d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
                         </svg>
-                        Sobre Braille
-                    </h3>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        El sistema Braille es un método de lectura y escritura táctil utilizado por personas con
-                        discapacidad visual.
-                        Consiste en combinaciones de puntos en relieve que representan letras, números y símbolos.
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Números y Símbolos</h3>
+                    <p class="text-gray-600">Números 0-9 y signos de puntuación con indicadores especiales</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Modal Cámara -->
+        <div id="modalCamara" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-2xl w-full">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-primary-50 to-white">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl">📷</span>
+                        <h3 class="text-xl font-bold text-gray-800">Cámara de Traducción</h3>
+                    </div>
+                    <button onclick="cerrarCamara()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="relative aspect-video bg-black">
+                    <video id="video" class="w-full h-full object-cover" autoplay playsinline></video>
+                    <canvas id="canvas" class="hidden"></canvas>
+                    <div id="cameraStatus" class="absolute bottom-4 left-0 right-0 text-center">
+                        <span class="bg-black/60 text-white px-4 py-1 rounded-full text-xs font-medium">Apunta al texto que deseas traducir</span>
+                    </div>
+                </div>
+
+                <div class="p-8 flex flex-col items-center space-y-4">
+                    <div class="flex space-x-4 w-full">
+                        <button onclick="capturarYTraducir()" id="btnCapturar"
+                            class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all flex items-center justify-center space-x-2">
+                            <span id="captureIcon">📸</span>
+                            <span id="captureText">Tomar Foto y Traducir</span>
+                        </button>
+                    </div>
+                    <p class="text-xs text-gray-400 text-center">
+                        * El sistema detectará automáticamente el texto en español utilizando OCR. <br>
+                        El reconocimiento de Braille por cámara está en fase experimental.
                     </p>
                 </div>
             </div>
-        </main>
+        </div>
 
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-100 mt-16">
@@ -322,6 +425,10 @@
         <script>
             // Variable global para conservar la última traducción Braille sin que se sobreescriba por mensajes
             let ultimaTraduccionBraille = '';
+            let streamCamara = null;
+            let puntosSeleccionados = new Set();
+            let tesseractWorker = null; // Worker persistente para mejorar velocidad
+
             // Inicialización
             document.addEventListener('DOMContentLoaded', function () {
                 actualizarContador();
@@ -349,15 +456,271 @@
                         traducir();
                     }
                 });
+
+                // Event listeners para botones de puntos del teclado Braille
+                document.querySelectorAll('.dot-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const punto = parseInt(this.getAttribute('data-dot'));
+                        if (puntosSeleccionados.has(punto)) {
+                            puntosSeleccionados.delete(punto);
+                            this.classList.remove('bg-accent-500', 'text-white', 'border-accent-600');
+                            this.classList.add('bg-white', 'text-gray-400', 'border-gray-300');
+                        } else {
+                            puntosSeleccionados.add(punto);
+                            this.classList.add('bg-accent-500', 'text-white', 'border-accent-600');
+                            this.classList.remove('bg-white', 'text-gray-400', 'border-gray-300');
+                        }
+                        actualizarPreviewBraille();
+                    });
+                });
             });
 
-            // Actualizar contador de caracteres
+            // --- Lógica Teclado Braille ---
+
+            function toggleTecladoBraille() {
+                const teclado = document.getElementById('tecladoBraille');
+                teclado.classList.toggle('hidden');
+                if (!teclado.classList.contains('hidden')) {
+                    teclado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+
+            function actualizarPreviewBraille() {
+                const preview = document.getElementById('previewBrailleChar');
+                preview.textContent = generarCaracterBraille();
+            }
+
+            function generarCaracterBraille() {
+                let mask = 0;
+                if (puntosSeleccionados.has(1)) mask |= 0x01;
+                if (puntosSeleccionados.has(2)) mask |= 0x02;
+                if (puntosSeleccionados.has(3)) mask |= 0x04;
+                if (puntosSeleccionados.has(4)) mask |= 0x08;
+                if (puntosSeleccionados.has(5)) mask |= 0x10;
+                if (puntosSeleccionados.has(6)) mask |= 0x20;
+                // Puntos 7 y 8 no usados en braille estándar de 6 puntos pero soportados por Unicode
+                return String.fromCharCode(0x2800 + mask);
+            }
+
+            function insertarCaracterBraille() {
+                const char = generarCaracterBraille();
+                if (char === '⠀' && puntosSeleccionados.size === 0) return;
+                
+                const textarea = document.getElementById('texto');
+                textarea.value += char;
+                actualizarContador();
+                limpiarPuntos();
+            }
+
+            function insertarEspacioBraille() {
+                const textarea = document.getElementById('texto');
+                textarea.value += ' ';
+                actualizarContador();
+            }
+
+            function limpiarPuntos() {
+                puntosSeleccionados.clear();
+                document.querySelectorAll('.dot-btn').forEach(btn => {
+                    btn.classList.remove('bg-accent-500', 'text-white', 'border-accent-600');
+                    btn.classList.add('bg-white', 'text-gray-400', 'border-gray-300');
+                });
+                actualizarPreviewBraille();
+            }
+
+            // --- Lógica de Cámara y OCR Mejorada ---
+
+            async function abrirCamara() {
+                const modal = document.getElementById('modalCamara');
+                const video = document.getElementById('video');
+                modal.classList.remove('hidden');
+                
+                try {
+                    streamCamara = await navigator.mediaDevices.getUserMedia({ 
+                        video: { 
+                            facingMode: 'environment',
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }, 
+                        audio: false 
+                    });
+                    video.srcObject = streamCamara;
+                } catch (err) {
+                    console.error("Error al acceder a la cámara:", err);
+                    alert("No se pudo acceder a la cámara o no se encontraron resoluciones óptimas.");
+                    cerrarCamara();
+                }
+            }
+
+            function cerrarCamara() {
+                const modal = document.getElementById('modalCamara');
+                const video = document.getElementById('video');
+                modal.classList.add('hidden');
+                
+                if (streamCamara) {
+                    streamCamara.getTracks().forEach(track => track.stop());
+                    streamCamara = null;
+                }
+                video.srcObject = null;
+            }
+
+            async function procesarArchivoImagen(event) {
+                const archivo = event.target.files[0];
+                if (!archivo) return;
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const dataUrl = e.target.result;
+                    procesarImagenOCR(dataUrl, "Subiendo y analizando...");
+                };
+                reader.readAsDataURL(archivo);
+            }
+
+            async function capturarYTraducir() {
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Usamos una resolución mayor para el canvas
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0);
+                
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                cerrarCamara();
+                procesarImagenOCR(dataUrl, "Procesando captura...");
+            }
+
+            async function procesarImagenOCR(dataUrl, mensajeLoading) {
+                const btnTraducir = document.getElementById('btnTraducir');
+                const btnText = document.getElementById('btnText');
+                const btnIcon = document.getElementById('btnIcon');
+
+                // Estado de carga
+                btnTraducir.disabled = true;
+                btnTraducir.classList.add('opacity-75', 'cursor-not-allowed');
+                btnIcon.classList.add('animate-spin');
+                btnText.textContent = mensajeLoading;
+
+                try {
+                    // 1. Optimización: Escalar imagen si es muy grande antes de OCR
+                    const img = new Image();
+                    const scaledDataUrl = await new Promise((resolve) => {
+                        img.onload = () => {
+                            const maxDim = 1000; // Reducimos para velocidad, suficiente para OCR
+                            let w = img.width, h = img.height;
+                            if (w > maxDim || h > maxDim) {
+                                if (w > h) { h = (maxDim/w)*h; w = maxDim; }
+                                else { w = (maxDim/h)*w; h = maxDim; }
+                            }
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = w; tempCanvas.height = h;
+                            const tCtx = tempCanvas.getContext('2d');
+                            tCtx.drawImage(img, 0, 0, w, h);
+                            resolve(tempCanvas.toDataURL('image/jpeg', 0.8));
+                        };
+                        img.src = dataUrl;
+                    });
+
+                    // 2. Optimización: Reutilizar worker de Tesseract
+                    if (!tesseractWorker) {
+                        tesseractWorker = await Tesseract.createWorker('spa+en', 1);
+                    }
+                    
+                    const { data: { text: textOcr } } = await tesseractWorker.recognize(scaledDataUrl);
+
+                    if (textOcr && textOcr.trim().length > 0) {
+                        const textoLimpio = textOcr.trim();
+                        document.getElementById('texto').value = textoLimpio;
+                        actualizarContador();
+
+                        // Detectar si es Braille o Español
+                        detectarYConfigurarDireccion(textoLimpio);
+                        
+                        traducir();
+                    } else {
+                        alert("No se detectó texto en la imagen. Intenta con una imagen más clara.");
+                    }
+                } catch (err) {
+                    console.error("Error en OCR:", err);
+                    alert("Error al procesar la imagen: " + err.message);
+                } finally {
+                    btnTraducir.disabled = false;
+                    btnTraducir.classList.remove('opacity-75', 'cursor-not-allowed');
+                    btnIcon.classList.remove('animate-spin');
+                    btnText.textContent = 'Traducir';
+                }
+            }
+
+            function detectarYConfigurarDireccion(texto) {
+                // Contar caracteres Braille (Rango U+2800 - U+28FF)
+                let countBraille = 0;
+                for (let char of texto) {
+                    const code = char.charCodeAt(0);
+                    if (code >= 0x2800 && code <= 0x28FF) {
+                        countBraille++;
+                    }
+                }
+
+                // Si más del 30% son caracteres Braille, asumimos BRAILLE_A_ESPANOL
+                const esBraille = countBraille > 0 && (countBraille / texto.length) > 0.3;
+                
+                const radios = document.getElementsByName('direccion');
+                if (esBraille) {
+                    radios[1].checked = true; // BRAILLE_A_ESPANOL
+                } else {
+                    radios[0].checked = true; // ESPANOL_A_BRAILLE
+                }
+                actualizarPlaceholder();
+            }
+
+            // --- Lógica de Espejado (JS) ---
+
+            function espejarBrailleJs(textoBraille) {
+                if (!textoBraille) return textoBraille;
+                const lineas = textoBraille.split('\n');
+                const resultado = lineas.map(linea => {
+                    let lineaEspejada = '';
+                    for (let char of linea) {
+                        lineaEspejada += espejarCaracterJs(char);
+                    }
+                    // Invertir el orden de los caracteres en la línea (para escritura por el reverso)
+                    return lineaEspejada.split('').reverse().join('');
+                });
+                return resultado.join('\n');
+            }
+
+            function espejarCaracterJs(c) {
+                const code = c.charCodeAt(0);
+                // Rango Braille Unicode: 0x2800 - 0x28FF
+                if (code < 0x2800 || code > 0x28FF) return c;
+                
+                let mask = code - 0x2800;
+                let newMask = 0;
+                // Mapeo de puntos:
+                // Normal: 1 4  Espejo: 4 1
+                //         2 5          5 2
+                //         3 6          6 3
+                //         7 8 (si aplica)
+                if ((mask & 0x01) !== 0) newMask |= 0x08; // 1 -> 4
+                if ((mask & 0x02) !== 0) newMask |= 0x10; // 2 -> 5
+                if ((mask & 0x04) !== 0) newMask |= 0x20; // 3 -> 6
+                if ((mask & 0x08) !== 0) newMask |= 0x01; // 4 -> 1
+                if ((mask & 0x10) !== 0) newMask |= 0x02; // 5 -> 2
+                if ((mask & 0x20) !== 0) newMask |= 0x04; // 6 -> 3
+                if ((mask & 0x40) !== 0) newMask |= 0x80; // 7 -> 8
+                if ((mask & 0x80) !== 0) newMask |= 0x40; // 8 -> 7
+                
+                return String.fromCharCode(0x2800 + newMask);
+            }
+
+            // --- Lógica de UI Existente ---
+
             function actualizarContador() {
                 const texto = document.getElementById('texto').value;
                 document.getElementById('charCount').textContent = texto.length;
             }
 
-            // Actualizar placeholder y label según dirección
             function actualizarPlaceholder() {
                 const direccion = document.querySelector('input[name="direccion"]:checked').value;
                 const textarea = document.getElementById('texto');
@@ -372,31 +735,28 @@
                 }
             }
 
-            // Obtener URL de la API
             function obtenerUrlApi() {
                 return '<%= request.getContextPath() %>/api/traducir';
             }
 
-            // Mostrar resultado
             function mostrarResultado(texto, tipo, emoji) {
                 const resultado = document.getElementById('resultado');
                 const resultadoEtiqueta = document.getElementById('resultadoEtiqueta');
                 const resultText = document.getElementById('resultText');
                 const resultEmoji = document.getElementById('resultEmoji');
-                const resultDiv = resultado.querySelector('div');
+                const resultDiv = document.getElementById('resultContainer');
 
                 resultText.textContent = texto;
-                resultEmoji.textContent = emoji;
+                resultEmoji.textContent = emoji || '';
                 resultado.classList.remove('hidden');
                 if (resultadoEtiqueta) {
                     resultadoEtiqueta.classList.remove('hidden');
                 }
 
-                // Aplicar estilos según tipo
                 resultDiv.className = 'p-6 rounded-xl border-2 ';
                 if (tipo === 'success') {
                     resultDiv.className += 'bg-green-50 border-green-300';
-                    resultText.className = 'text-xl font-medium break-words select-all text-green-900';
+                    resultText.className = 'text-2xl font-medium break-words select-all text-green-900';
                 } else if (tipo === 'error') {
                     resultDiv.className += 'bg-red-50 border-red-300';
                     resultText.className = 'text-xl font-medium break-words select-all text-red-900';
@@ -405,11 +765,9 @@
                     resultText.className = 'text-xl font-medium break-words select-all text-gray-900';
                 }
 
-                // Scroll suave al resultado
                 resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
 
-            // Función principal de traducción
             async function traducir() {
                 const texto = document.getElementById('texto').value.trim();
                 const direccion = document.querySelector('input[name="direccion"]:checked').value;
@@ -419,13 +777,11 @@
 
                 ultimaTraduccionBraille = '';
 
-                // Validación
                 if (!texto) {
                     mostrarResultado('Por favor ingresa un texto para traducir', 'error', '⚠️');
                     return;
                 }
 
-                // Deshabilitar botón y mostrar loading
                 btnTraducir.disabled = true;
                 btnTraducir.classList.add('opacity-75', 'cursor-not-allowed');
                 btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
@@ -451,26 +807,21 @@
 
                     if (data.exito) {
                         mostrarResultado(data.textoTraducido, 'success', '');
-                        // Guardar la traducción Braille solo si la dirección es Español -> Braille
-                        if (direccion === 'ESPANOL_A_BRAILLE') {
+                        
+                        if (direccion.includes('A_BRAILLE')) {
                             ultimaTraduccionBraille = data.textoTraducido || '';
-                        } else {
-                            ultimaTraduccionBraille = '';
                         }
                         actualizarEstadoDescarga();
                     } else {
                         mostrarResultado(data.error || 'Error desconocido', 'error', '❌');
-                        ultimaTraduccionBraille = '';
                         actualizarEstadoDescarga();
                     }
 
                 } catch (error) {
                     console.error('Error:', error);
                     mostrarResultado('Error de conexión: ' + error.message, 'error', '❌');
-                    ultimaTraduccionBraille = '';
                     actualizarEstadoDescarga();
                 } finally {
-                    // Rehabilitar botón
                     btnTraducir.disabled = false;
                     btnTraducir.classList.remove('opacity-75', 'cursor-not-allowed');
                     btnIcon.classList.remove('animate-spin');
@@ -479,13 +830,11 @@
                 }
             }
 
-            // Limpiar formulario
             function limpiar() {
                 document.getElementById('texto').value = '';
                 document.getElementById('resultado').classList.add('hidden');
-                const resultadoEtiqueta = document.getElementById('resultadoEtiqueta');
-                if (resultadoEtiqueta) {
-                    resultadoEtiqueta.classList.add('hidden');
+                if (document.getElementById('resultadoEtiqueta')) {
+                    document.getElementById('resultadoEtiqueta').classList.add('hidden');
                 }
                 actualizarContador();
                 document.getElementById('texto').focus();
@@ -493,16 +842,13 @@
                 actualizarEstadoDescarga();
             }
 
-            // Copiar resultado al portapapeles
             async function copiar() {
                 const resultTextEl = document.getElementById('resultText');
                 const btnCopiar = document.getElementById('btnCopiar');
                 const btnText = document.getElementById('btnTextCopiar');
-
                 const texto = resultTextEl ? resultTextEl.textContent.trim() : '';
 
                 if (!texto) {
-                    // Mostrar mensaje de error si no hay nada que copiar
                     mostrarResultado('No hay texto para copiar', 'error', '⚠️');
                     return;
                 }
@@ -510,50 +856,32 @@
                 const prevText = btnText ? btnText.textContent : '';
 
                 try {
-                    if (btnCopiar) {
-                        btnCopiar.disabled = true;
-                    }
-
+                    if (btnCopiar) btnCopiar.disabled = true;
                     if (btnText) btnText.textContent = 'Copiando...';
 
-                    // Intentar usar Clipboard API
                     if (navigator.clipboard && navigator.clipboard.writeText) {
                         await navigator.clipboard.writeText(texto);
                     } else {
-                        // Fallback para navegadores antiguos
                         const textarea = document.createElement('textarea');
                         textarea.value = texto;
-                        textarea.setAttribute('readonly', '');
-                        textarea.style.position = 'absolute';
-                        textarea.style.left = '-9999px';
                         document.body.appendChild(textarea);
                         textarea.select();
-                        try {
-                            document.execCommand('copy');
-                        } finally {
-                            document.body.removeChild(textarea);
-                        }
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
                     }
 
                     if (btnText) btnText.textContent = 'Copiado';
-
-                    // Restaurar después de un momento
                     setTimeout(() => {
                         if (btnText) btnText.textContent = prevText;
                         if (btnCopiar) btnCopiar.disabled = false;
                     }, 1800);
-
                 } catch (err) {
-                    console.error('Error copiando al portapapeles:', err);
-                    mostrarResultado('Error al copiar: ' + (err && err.message ? err.message : err), 'error', '❌');
-
-                    // Restaurar estado en caso de error
+                    console.error('Error copiando:', err);
                     if (btnCopiar) btnCopiar.disabled = false;
                     if (btnText) btnText.textContent = 'Copiar';
                 }
             }
 
-            // Botón de descarga: habilitado solo si hay traducción Braille reciente
             function actualizarEstadoDescarga() {
                 const btnDescargar = document.getElementById('btnDescargar');
                 if (!btnDescargar) return;
@@ -563,29 +891,31 @@
                 btnDescargar.classList.toggle('cursor-not-allowed', !habilitado);
             }
 
-            // Estado visual del botón Descargar mientras se genera la imagen
             function setDescargaEnProceso(enProceso) {
                 const btn = document.getElementById('btnDescargar');
                 if (!btn) return;
                 btn.disabled = enProceso || !ultimaTraduccionBraille;
                 btn.classList.toggle('opacity-75', enProceso);
-                btn.classList.toggle('cursor-wait', enProceso);
-                btn.classList.toggle('opacity-50', !ultimaTraduccionBraille);
-                btn.classList.toggle('cursor-not-allowed', !ultimaTraduccionBraille && !enProceso);
                 if (enProceso) {
                     btn.innerHTML = '<span class="font-semibold">Generando PNG...</span>';
                 } else {
-                    btn.innerHTML = '<svg id="btnIconDescargar" class="w-8 h-8 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path></svg><span id="btnTextDescargar" class="font-semibold">Descargar PNG</span>';
+                    btn.innerHTML = '<svg id="btnIconDescargar" class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"></path></svg><span id="btnTextDescargar" class="font-semibold text-sm">Descargar PNG</span>';
                 }
             }
 
-            // Descargar captura PNG del cuadro de resultado
             async function descargarBraillePng() {
-                const textoBraille = (ultimaTraduccionBraille || '').trim();
-                if (!textoBraille) {
+                let textoParaExportar = (ultimaTraduccionBraille || '').trim();
+                const modoEspejo = document.getElementById('checkEspejo').checked;
+
+                if (!textoParaExportar) {
                     mostrarResultado('No hay traducción Braille para descargar', 'error', '⚠️');
                     return;
                 }
+
+                if (modoEspejo) {
+                    textoParaExportar = espejarBrailleJs(textoParaExportar);
+                }
+
                 if (!window.html2canvas) {
                     mostrarResultado('Biblioteca de exportación no disponible', 'error', '❌');
                     return;
@@ -594,63 +924,38 @@
                 setDescargaEnProceso(true);
 
                 try {
-                    // Crea un contenedor fuera de pantalla SOLO con el texto Braille
                     const exporter = document.createElement('div');
                     exporter.id = 'braille-exporter';
-
-                    // Configura un lienzo grande para impresión (aprox. A4 a 300dpi: 2480px de ancho)
-                    // - Solo texto negro sobre fondo blanco
-                    // - Sin bordes, sin emojis, sin UI
-                    // - Texto grande y legible, con envoltura de línea
                     Object.assign(exporter.style, {
-                        position: 'fixed',
-                        left: '-99999px',
-                        top: '0',
-                        width: '2480px',        // ancho grande para impresión
-                        background: '#ffffff',
-                        color: '#000000',
-                        padding: '80px',
-                        boxSizing: 'border-box',
-                        textAlign: 'center',
-                        whiteSpace: 'pre-wrap',
-                        wordWrap: 'break-word',
-                        overflowWrap: 'break-word',
-                        // Fuentes con soporte para el bloque Unicode de Braille en Windows
+                        position: 'fixed', left: '-99999px', top: '0',
+                        width: '2480px', background: '#ffffff', color: '#000000',
+                        padding: '80px', boxSizing: 'border-box', textAlign: 'center',
+                        whiteSpace: 'pre-wrap', wordWrap: 'break-word', overflowWrap: 'break-word',
                         fontFamily: "'Segoe UI Symbol','Arial Unicode MS',system-ui,sans-serif",
-                        // Tamaño base grande; se ajusta un poco según longitud
-                        lineHeight: '1.12',
-                        letterSpacing: '8px'
+                        lineHeight: '1.12', letterSpacing: '8px'
                     });
 
-                    // Ajuste simple de tamaño según longitud para mantenerlo grande y que quepa
-                    const len = textoBraille.length;
-                    let fontSize = 220;     // muy grande por defecto
+                    const len = textoParaExportar.length;
+                    let fontSize = 220;
                     if (len > 40) fontSize = 180;
                     if (len > 80) fontSize = 140;
                     if (len > 140) fontSize = 110;
                     exporter.style.fontSize = fontSize + 'px';
-
-                    exporter.textContent = textoBraille;
+                    exporter.textContent = textoParaExportar;
                     document.body.appendChild(exporter);
 
-                    // Renderiza a alta resolución
                     const scale = Math.max(2, Math.ceil(window.devicePixelRatio || 1));
-                    const canvas = await html2canvas(exporter, {
-                        backgroundColor: '#ffffff',
-                        scale: scale
-                    });
+                    const canvas = await html2canvas(exporter, { backgroundColor: '#ffffff', scale: scale });
 
-                    // Descarga el PNG
                     const enlace = document.createElement('a');
                     enlace.href = canvas.toDataURL('image/png');
-                    enlace.download = 'senaletica-braille.png';
+                    enlace.download = modoEspejo ? 'braille-espejo-escritura.png' : 'braille-lectura-normal.png';
                     enlace.click();
 
-                    // Limpieza
                     document.body.removeChild(exporter);
                 } catch (error) {
                     console.error('Error generando PNG:', error);
-                    mostrarResultado('No se pudo generar el PNG: ' + (error && error.message ? error.message : error), 'error', '❌');
+                    mostrarResultado('No se pudo generar el PNG: ' + error.message, 'error', '❌');
                 } finally {
                     setDescargaEnProceso(false);
                 }

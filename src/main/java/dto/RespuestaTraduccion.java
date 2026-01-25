@@ -36,6 +36,11 @@ public class RespuestaTraduccion {
      * Texto resultante después de la traducción.
      */
     private String textoTraducido;
+
+    /**
+     * Texto resultante con efecto espejo (opcional).
+     */
+    private String textoEspejo;
     
     /**
      * Dirección en la que se realizó la traducción.
@@ -76,6 +81,17 @@ public class RespuestaTraduccion {
         this.exito = true;
         this.textoOriginal = textoOriginal;
         this.textoTraducido = textoTraducido;
+        this.direccion = direccion;
+    }
+
+    /**
+     * Constructor para respuestas exitosas con información completa incluyendo espejo.
+     */
+    public RespuestaTraduccion(String textoOriginal, String textoTraducido, String textoEspejo, String direccion) {
+        this.exito = true;
+        this.textoOriginal = textoOriginal;
+        this.textoTraducido = textoTraducido;
+        this.textoEspejo = textoEspejo;
         this.direccion = direccion;
     }
 
@@ -162,6 +178,24 @@ public class RespuestaTraduccion {
      */
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    /**
+     * Obtiene el texto resultante con efecto espejo.
+     * 
+     * @return El texto en espejo
+     */
+    public String getTextoEspejo() {
+        return textoEspejo;
+    }
+
+    /**
+     * Establece el texto resultante con efecto espejo.
+     * 
+     * @param textoEspejo El texto en espejo
+     */
+    public void setTextoEspejo(String textoEspejo) {
+        this.textoEspejo = textoEspejo;
     }
 
     /**

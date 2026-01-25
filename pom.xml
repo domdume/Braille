@@ -112,14 +112,15 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-            <!-- El plugin tomcat7-maven-plugin es antiguo y usa javax.*; mantenerlo si funciona, pero considerar actualización a cargo/tomcat-embed para jakarta.* -->
+            <!-- Usar Jetty 11+ para soportar Jakarta EE 9/10 -->
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>11.0.15</version>
                 <configuration>
-                    <port>8080</port>
-                    <path>/Braille</path>
+                    <webApp>
+                        <contextPath>/Braille</contextPath>
+                    </webApp>
                 </configuration>
             </plugin>
         </plugins>

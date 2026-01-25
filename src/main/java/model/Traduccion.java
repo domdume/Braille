@@ -156,6 +156,10 @@ public class Traduccion {
             if (direccion == DireccionTraduccion.ESPANOL_A_BRAILLE) {
                 validarTextoEspanol(textoLimpio);
                 this.textoTraducido = traducirEspanolABraille(textoLimpio);
+            } else if (direccion == DireccionTraduccion.ESPANOL_A_BRAILLE_ESPEJO) {
+                validarTextoEspanol(textoLimpio);
+                String brailleNormal = traducirEspanolABraille(textoLimpio);
+                this.textoTraducido = MapeadorBraille.espejarBraille(brailleNormal);
             } else {
                 validarTextoBraille(textoLimpio);
                 this.textoTraducido = traducirBrailleAEspanol(textoLimpio);
