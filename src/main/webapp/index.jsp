@@ -196,15 +196,15 @@
                                     class="border-2 border-dashed border-gray-300 rounded-xl p-4 transition-all duration-200 hover:border-accent-400 hover:bg-accent-50 flex flex-col items-center justify-center group h-full">
                                 <span class="text-2xl group-hover:scale-110 transition-transform">📷</span>
                                 <p class="font-semibold text-gray-800 mt-1">Usar Cámara</p>
-                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">Traducir Foto</p>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">Solo Español 🇪🇸</p>
                             </button>
 
                             <button type="button" onclick="document.getElementById('inputArchivo').click()"
                                     class="border-2 border-dashed border-gray-300 rounded-xl p-4 transition-all duration-200 hover:border-primary-400 hover:bg-primary-50 flex flex-col items-center justify-center group h-full">
                                 <span class="text-2xl group-hover:scale-110 transition-transform">📁</span>
-                                <input type="file" id="inputArchivo" class="hidden" accept="image/*" onchange="procesarArchivoImagen(event)">
+                                <input type="file" id="inputArchivo" class="hidden" accept="image/jpeg,image/png,image/gif,image/webp" onchange="procesarArchivoImagen(event)">
                                 <p class="font-semibold text-gray-800 mt-1">Subir Imagen</p>
-                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">Cargar Archivo</p>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-tighter">JPG, PNG, GIF, WebP</p>
                             </button>
 
                             <div class="col-span-1 flex flex-col gap-2">
@@ -371,13 +371,13 @@
 
         </main>
 
-        <!-- Modal Cámara -->
+        <!-- Modal Cámara - Versión Completa con OCR y Traducción -->
         <div id="modalCamara" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-2xl w-full">
-                <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-primary-50 to-white">
+            <div class="bg-white rounded-3xl overflow-hidden shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-primary-50 to-white sticky top-0 z-10">
                     <div class="flex items-center space-x-3">
                         <span class="text-2xl">📷</span>
-                        <h3 class="text-xl font-bold text-gray-800">Cámara de Traducción</h3>
+                        <h3 class="text-xl font-bold text-gray-800">Captura y Traducción</h3>
                     </div>
                     <button onclick="cerrarCamara()" class="text-gray-400 hover:text-gray-600 transition-colors">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -386,26 +386,96 @@
                     </button>
                 </div>
                 
-                <div class="relative aspect-video bg-black">
-                    <video id="video" class="w-full h-full object-cover" autoplay playsinline></video>
-                    <canvas id="canvas" class="hidden"></canvas>
-                    <div id="cameraStatus" class="absolute bottom-4 left-0 right-0 text-center">
-                        <span class="bg-black/60 text-white px-4 py-1 rounded-full text-xs font-medium">Apunta al texto que deseas traducir</span>
+                <div class="p-8">
+                    <!-- Aviso sobre idioma -->
+                    <div class="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
+                        <p class="text-sm font-semibold text-amber-900">ℹ️ Esta funcionalidad solo reconoce texto en español</p>
+                        <p class="text-xs text-amber-800 mt-1">El OCR está configurado para extraer texto en español únicamente.</p>
                     </div>
-                </div>
 
-                <div class="p-8 flex flex-col items-center space-y-4">
-                    <div class="flex space-x-4 w-full">
-                        <button onclick="capturarYTraducir()" id="btnCapturar"
-                            class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all flex items-center justify-center space-x-2">
-                            <span id="captureIcon">📸</span>
-                            <span id="captureText">Tomar Foto y Traducir</span>
+                    <!-- Estado del proceso -->
+                    <div id="estadoProceso" class="mb-6 hidden">
+                        <div class="flex items-center space-x-3">
+                            <div class="animate-spin rounded-full h-5 w-5 border-2 border-primary-500 border-t-transparent"></div>
+                            <span id="mensajeEstado" class="text-sm font-medium text-gray-700">Inicializando...</span>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Captura -->
+                    <div id="seccionCaptura" class="mb-8">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Paso 1: Capturar Foto</h4>
+                        <div class="relative aspect-video bg-black rounded-2xl overflow-hidden mb-4">
+                            <video id="video" class="w-full h-full object-cover" autoplay playsinline></video>
+                            <canvas id="canvas" class="hidden"></canvas>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="capturarFoto()" id="btnCapturar"
+                                    class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                                <span>📸</span>
+                                <span>Capturar Foto</span>
+                            </button>
+                            <button onclick="cerrarCamara()" 
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Texto Extraído -->
+                    <div id="seccionTextoExtraido" class="mb-8 hidden">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Paso 2: Texto Extraído (Español)</h4>
+                        <div class="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 mb-4">
+                            <p id="textoExtraido" class="text-lg font-medium text-blue-900 break-words whitespace-pre-wrap"></p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="procesarOCR()" id="btnProcesarOCR"
+                                    class="flex-1 bg-accent-600 hover:bg-accent-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                                <span>✨</span>
+                                <span>Traducir a Braille</span>
+                            </button>
+                            <button id="btnRetomar" onclick="volverACapturar()" 
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all">
+                                Retomar Foto
+                            </button>
+                            <button id="btnSubirOtra" onclick="subirOtraImagen()" 
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all hidden">
+                                Subir otra imagen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Resultado Braille -->
+                    <div id="seccionResultadoBraille" class="mb-8 hidden">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-4">Paso 3: Traducción a Braille</h4>
+                        <div class="bg-green-50 border-2 border-green-300 rounded-xl p-6">
+                            <p id="textoBraille" class="text-4xl font-bold text-green-900 break-words text-center font-braille leading-relaxed" style="font-family: 'Segoe UI Symbol', 'Arial Unicode MS', sans-serif; letter-spacing: 2px;"></p>
+                        </div>
+                        <div class="mt-4 flex gap-3">
+                            <button onclick="copiarBraille()" 
+                                    class="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all flex items-center justify-center space-x-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                                </svg>
+                                <span>Copiar</span>
+                            </button>
+                            <button onclick="cerrarCamara()" 
+                                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-xl transition-all">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Errores -->
+                    <div id="seccionError" class="hidden">
+                        <div class="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-4">
+                            <h4 class="font-semibold text-red-900 mb-2">❌ Error en el proceso</h4>
+                            <p id="textoError" class="text-sm text-red-800"></p>
+                        </div>
+                        <button onclick="reiniciarCamara()" 
+                                class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-xl transition-all">
+                            Intentar de Nuevo
                         </button>
                     </div>
-                    <p class="text-xs text-gray-400 text-center">
-                        * El sistema detectará automáticamente el texto en español utilizando OCR. <br>
-                        El reconocimiento de Braille por cámara está en fase experimental.
-                    </p>
                 </div>
             </div>
         </div>
@@ -427,7 +497,9 @@
             let ultimaTraduccionBraille = '';
             let streamCamara = null;
             let puntosSeleccionados = new Set();
-            let tesseractWorker = null; // Worker persistente para mejorar velocidad
+            let tesseractWorker = null;
+            let fotoCapturada = null;
+            let esDelArchivo = false;
 
             // Inicialización
             document.addEventListener('DOMContentLoaded', function () {
@@ -498,7 +570,6 @@
                 if (puntosSeleccionados.has(4)) mask |= 0x08;
                 if (puntosSeleccionados.has(5)) mask |= 0x10;
                 if (puntosSeleccionados.has(6)) mask |= 0x20;
-                // Puntos 7 y 8 no usados en braille estándar de 6 puntos pero soportados por Unicode
                 return String.fromCharCode(0x2800 + mask);
             }
 
@@ -514,7 +585,7 @@
 
             function insertarEspacioBraille() {
                 const textarea = document.getElementById('texto');
-                textarea.value += ' ';
+                textarea.value += String.fromCharCode(0x2800);  // ⠀ (Braille blank/espacio válido)
                 actualizarContador();
             }
 
@@ -527,151 +598,277 @@
                 actualizarPreviewBraille();
             }
 
-            // --- Lógica de Cámara y OCR Mejorada ---
+            // --- LÓGICA COMPLETA DE CÁMARA Y OCR ---
 
-            async function abrirCamara() {
+            function abrirCamara() {
                 const modal = document.getElementById('modalCamara');
                 const video = document.getElementById('video');
                 modal.classList.remove('hidden');
+                mostrarSeccion('seccionCaptura');
+                ocultarSeccion('seccionTextoExtraido');
+                ocultarSeccion('seccionResultadoBraille');
+                ocultarSeccion('seccionError');
                 
-                try {
-                    streamCamara = await navigator.mediaDevices.getUserMedia({ 
-                        video: { 
-                            facingMode: 'environment',
-                            width: { ideal: 1280 },
-                            height: { ideal: 720 }
-                        }, 
-                        audio: false 
-                    });
-                    video.srcObject = streamCamara;
-                } catch (err) {
-                    console.error("Error al acceder a la cámara:", err);
-                    alert("No se pudo acceder a la cámara o no se encontraron resoluciones óptimas.");
-                    cerrarCamara();
-                }
+                navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' }, 
+                    audio: false 
+                })
+                .then(stream => {
+                    streamCamara = stream;
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    mostrarError('No se pudo acceder a la cámara: ' + err.message);
+                });
             }
 
             function cerrarCamara() {
                 const modal = document.getElementById('modalCamara');
-                const video = document.getElementById('video');
                 modal.classList.add('hidden');
-                
                 if (streamCamara) {
                     streamCamara.getTracks().forEach(track => track.stop());
                     streamCamara = null;
                 }
-                video.srcObject = null;
+                fotoCapturada = null;
             }
 
-            async function procesarArchivoImagen(event) {
+            function capturarFoto() {
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                
+                if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+                    mostrarError('La cámara aún no está lista. Intenta de nuevo en un momento.');
+                    return;
+                }
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0);
+                
+                fotoCapturada = canvas.toDataURL('image/png');
+                
+                // Detener la cámara
+                if (streamCamara) {
+                    streamCamara.getTracks().forEach(track => track.stop());
+                    streamCamara = null;
+                }
+
+                // Ir al paso 2: Extraer texto con OCR
+                mostrarSeccion('seccionTextoExtraido');
+                ocultarSeccion('seccionCaptura');
+                extraerTextoOCR();
+            }
+
+            async function extraerTextoOCR() {
+                mostrarEstado('Inicializando motor OCR...');
+                
+                try {
+                    // Inicializar worker de Tesseract si no existe
+                    if (!tesseractWorker) {
+                        tesseractWorker = await Tesseract.createWorker('spa', 1);
+                    }
+
+                    mostrarEstado('Extrayendo texto de la imagen...');
+                    const { data: { text } } = await tesseractWorker.recognize(fotoCapturada);
+
+                    if (!text || text.trim().length === 0) {
+                        mostrarError('No se detectó texto en la imagen. Asegúrate que el texto sea visible y esté bien enfocado.');
+                        volverACapturar();
+                        return;
+                    }
+
+                    // Limpiar el texto
+                    const textoLimpio = limpiarTexto(text);
+                    
+                    mostrarEstado(null);
+                    document.getElementById('textoExtraido').textContent = textoLimpio;
+                    
+                    // Guardar el texto para el siguiente paso
+                    fotoCapturada = { imagen: fotoCapturada, texto: textoLimpio };
+                    
+                    // Mostrar la sección de texto extraído
+                    actualizarBotonesSeccionTexto();
+                    mostrarSeccion('seccionTextoExtraido');
+
+                } catch (err) {
+                    console.error('Error en OCR:', err);
+                    mostrarError('Error al extraer texto: ' + err.message);
+                    volverACapturar();
+                }
+            }
+
+            function limpiarTexto(texto) {
+                // Eliminar saltos de línea innecesarios
+                texto = texto.replace(/\n+/g, ' ');
+                
+                // Eliminar espacios duplicados
+                texto = texto.replace(/\s+/g, ' ');
+                
+                // Eliminar caracteres especiales no válidos (mantener letras, números, espacios, puntuación básica)
+                texto = texto.replace(/[^\wáéíóúñÁÉÍÓÚÑ\s.,;:¿?¡!\-()]/g, '');
+                
+                // Trim
+                texto = texto.trim();
+                
+                return texto;
+            }
+
+            async function procesarOCR() {
+                if (!fotoCapturada || !fotoCapturada.texto) {
+                    mostrarError('No hay texto extraído para procesar.');
+                    return;
+                }
+
+                const texto = fotoCapturada.texto;
+                mostrarEstado('Traduciendo a Braille...');
+                ocultarSeccion('seccionTextoExtraido');
+
+                try {
+                    const url = '<%= request.getContextPath() %>/api/traducir';
+                    const solicitud = {
+                        texto: texto,
+                        direccion: 'ESPANOL_A_BRAILLE'
+                    };
+
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json; charset=UTF-8'
+                        },
+                        body: JSON.stringify(solicitud)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.exito) {
+                        const textoBraille = data.textoTraducido || '';
+                        document.getElementById('textoBraille').textContent = textoBraille;
+                        ultimaTraduccionBraille = textoBraille;
+                        actualizarEstadoDescarga();
+                        
+                        mostrarEstado(null);
+                        mostrarSeccion('seccionResultadoBraille');
+                    } else {
+                        mostrarError('Error en la traducción: ' + (data.error || 'Error desconocido'));
+                        volverACapturar();
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    mostrarError('Error de conexión: ' + error.message);
+                    volverACapturar();
+                }
+            }
+
+            function volverACapturar() {
+                fotoCapturada = null;
+                esDelArchivo = false;
+                mostrarSeccion('seccionCaptura');
+                ocultarSeccion('seccionTextoExtraido');
+                ocultarSeccion('seccionResultadoBraille');
+                
+                // Reiniciar la cámara
+                abrirCamara();
+            }
+
+            function subirOtraImagen() {
+                fotoCapturada = null;
+                esDelArchivo = false;
+                document.getElementById('inputArchivo').click();
+            }
+
+            function actualizarBotonesSeccionTexto() {
+                const btnRetomar = document.getElementById('btnRetomar');
+                const btnSubirOtra = document.getElementById('btnSubirOtra');
+                
+                if (esDelArchivo) {
+                    btnRetomar.classList.add('hidden');
+                    btnSubirOtra.classList.remove('hidden');
+                } else {
+                    btnRetomar.classList.remove('hidden');
+                    btnSubirOtra.classList.add('hidden');
+                }
+            }
+
+            function reiniciarCamara() {
+                fotoCapturada = null;
+                mostrarSeccion('seccionCaptura');
+                ocultarSeccion('seccionTextoExtraido');
+                ocultarSeccion('seccionResultadoBraille');
+                ocultarSeccion('seccionError');
+                abrirCamara();
+            }
+
+            function procesarArchivoImagen(event) {
                 const archivo = event.target.files[0];
                 if (!archivo) return;
 
                 const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const dataUrl = e.target.result;
-                    procesarImagenOCR(dataUrl, "Subiendo y analizando...");
+                reader.onload = (e) => {
+                    fotoCapturada = e.target.result;
+                    esDelArchivo = true;
+                    
+                    const modal = document.getElementById('modalCamara');
+                    modal.classList.remove('hidden');
+                    ocultarSeccion('seccionCaptura');
+                    ocultarSeccion('seccionTextoExtraido');
+                    ocultarSeccion('seccionResultadoBraille');
+                    ocultarSeccion('seccionError');
+                    
+                    // Iniciar OCR directamente
+                    extraerTextoOCR();
                 };
                 reader.readAsDataURL(archivo);
+                
+                // Limpiar el input para permitir seleccionar el mismo archivo de nuevo
+                event.target.value = '';
             }
 
-            async function capturarYTraducir() {
-                const video = document.getElementById('video');
-                const canvas = document.getElementById('canvas');
-                const ctx = canvas.getContext('2d');
+            function copiarBraille() {
+                const texto = document.getElementById('textoBraille').textContent;
+                if (!texto) return;
 
-                // Usamos una resolución mayor para el canvas
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                ctx.drawImage(video, 0, 0);
-                
-                const dataUrl = canvas.toDataURL('image/png');
-                
-                cerrarCamara();
-                procesarImagenOCR(dataUrl, "Procesando captura...");
-            }
-
-            async function procesarImagenOCR(dataUrl, mensajeLoading) {
-                const btnTraducir = document.getElementById('btnTraducir');
-                const btnText = document.getElementById('btnText');
-                const btnIcon = document.getElementById('btnIcon');
-
-                // Estado de carga
-                btnTraducir.disabled = true;
-                btnTraducir.classList.add('opacity-75', 'cursor-not-allowed');
-                btnIcon.classList.add('animate-spin');
-                btnText.textContent = mensajeLoading;
-
-                try {
-                    // 1. Optimización: Escalar imagen si es muy grande antes de OCR
-                    const img = new Image();
-                    const scaledDataUrl = await new Promise((resolve) => {
-                        img.onload = () => {
-                            const maxDim = 1000; // Reducimos para velocidad, suficiente para OCR
-                            let w = img.width, h = img.height;
-                            if (w > maxDim || h > maxDim) {
-                                if (w > h) { h = (maxDim/w)*h; w = maxDim; }
-                                else { w = (maxDim/h)*w; h = maxDim; }
-                            }
-                            const tempCanvas = document.createElement('canvas');
-                            tempCanvas.width = w; tempCanvas.height = h;
-                            const tCtx = tempCanvas.getContext('2d');
-                            tCtx.drawImage(img, 0, 0, w, h);
-                            resolve(tempCanvas.toDataURL('image/jpeg', 0.8));
-                        };
-                        img.src = dataUrl;
+                navigator.clipboard.writeText(texto)
+                    .then(() => {
+                        const btn = event.target.closest('button');
+                        const original = btn.innerHTML;
+                        btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span>Copiado</span>';
+                        setTimeout(() => {
+                            btn.innerHTML = original;
+                        }, 2000);
+                    })
+                    .catch(() => {
+                        alert('Error al copiar el texto');
                     });
+            }
 
-                    // 2. Optimización: Reutilizar worker de Tesseract
-                    if (!tesseractWorker) {
-                        tesseractWorker = await Tesseract.createWorker('spa+en', 1);
-                    }
-                    
-                    const { data: { text: textOcr } } = await tesseractWorker.recognize(scaledDataUrl);
+            function mostrarSeccion(id) {
+                document.getElementById(id).classList.remove('hidden');
+            }
 
-                    if (textOcr && textOcr.trim().length > 0) {
-                        const textoLimpio = textOcr.trim();
-                        document.getElementById('texto').value = textoLimpio;
-                        actualizarContador();
+            function ocultarSeccion(id) {
+                document.getElementById(id).classList.add('hidden');
+            }
 
-                        // Detectar si es Braille o Español
-                        detectarYConfigurarDireccion(textoLimpio);
-                        
-                        traducir();
-                    } else {
-                        alert("No se detectó texto en la imagen. Intenta con una imagen más clara.");
-                    }
-                } catch (err) {
-                    console.error("Error en OCR:", err);
-                    alert("Error al procesar la imagen: " + err.message);
-                } finally {
-                    btnTraducir.disabled = false;
-                    btnTraducir.classList.remove('opacity-75', 'cursor-not-allowed');
-                    btnIcon.classList.remove('animate-spin');
-                    btnText.textContent = 'Traducir';
+            function mostrarEstado(mensaje) {
+                const estadoDiv = document.getElementById('estadoProceso');
+                if (!mensaje) {
+                    estadoDiv.classList.add('hidden');
+                } else {
+                    document.getElementById('mensajeEstado').textContent = mensaje;
+                    estadoDiv.classList.remove('hidden');
                 }
             }
 
-            function detectarYConfigurarDireccion(texto) {
-                // Contar caracteres Braille (Rango U+2800 - U+28FF)
-                let countBraille = 0;
-                for (let char of texto) {
-                    const code = char.charCodeAt(0);
-                    if (code >= 0x2800 && code <= 0x28FF) {
-                        countBraille++;
-                    }
-                }
-
-                // Si más del 30% son caracteres Braille, asumimos BRAILLE_A_ESPANOL
-                const esBraille = countBraille > 0 && (countBraille / texto.length) > 0.3;
+            function mostrarError(mensaje) {
+                ocultarSeccion('estadoProceso');
+                ocultarSeccion('seccionCaptura');
+                ocultarSeccion('seccionTextoExtraido');
+                ocultarSeccion('seccionResultadoBraille');
                 
-                const radios = document.getElementsByName('direccion');
-                if (esBraille) {
-                    radios[1].checked = true; // BRAILLE_A_ESPANOL
-                } else {
-                    radios[0].checked = true; // ESPANOL_A_BRAILLE
-                }
-                actualizarPlaceholder();
+                document.getElementById('textoError').textContent = mensaje;
+                mostrarSeccion('seccionError');
             }
 
             // --- Lógica de Espejado (JS) ---
