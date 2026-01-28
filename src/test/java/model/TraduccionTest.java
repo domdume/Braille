@@ -174,8 +174,6 @@ class TraduccionTest {
     @Nested
     @DisplayName("Traducción Braille → Español")
     class TraduccionBrailleAEspanol {
-
-
         @Test
         @DisplayName("Debe traducir '⠓⠕⠇⠁' exactamente a 'hola'")
         void debeTraducirBrailleHola() {
@@ -188,6 +186,137 @@ class TraduccionTest {
 
             // Assert
             assertEquals("hola", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir '⠓⠕⠇⠁⠀⠍⠥⠝⠙⠕' a 'hola mundo'")
+        void debeTraducirHolaMundo() {
+            // Arrange
+            String textoBraille = "⠓⠕⠇⠁⠀⠍⠥⠝⠙⠕";
+            Traduccion traduccion = Traduccion.crear(textoBraille, DireccionTraduccion.BRAILLE_A_ESPANOL);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("hola mundo", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir números correctamente: '⠼⠁⠃⠉' -> '123'")
+        void debeTraducirNumeros() {
+            // Arrange
+            String textoBraille = "⠼⠁⠃⠉";
+            Traduccion traduccion = Traduccion.crear(textoBraille, DireccionTraduccion.BRAILLE_A_ESPANOL);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("123", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir mayúsculas correctamente: '⠨⠓⠕⠇⠁' -> 'Hola'")
+        void debeTraducirMayusculas() {
+            // Arrange
+            String textoBraille = "⠨⠓⠕⠇⠁";
+            Traduccion traduccion = Traduccion.crear(textoBraille, DireccionTraduccion.BRAILLE_A_ESPANOL);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("Hola", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir texto todo en mayúsculas: '⠨⠑⠨⠎⠨⠏⠨⠁⠨⠻⠨⠁' -> 'ESPAÑA'")
+        void debeTraducirTodoMayusculas() {
+            // Arrange
+            String textoBraille = "⠨⠑⠨⠎⠨⠏⠨⠁⠨⠻⠨⠁";
+            Traduccion traduccion = Traduccion.crear(textoBraille, DireccionTraduccion.BRAILLE_A_ESPANOL);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("ESPAÑA", traduccion.getTextoTraducido());
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+            "⠖⠨⠓⠕⠇⠁⠖, +Hola+",
+            "⠣⠞⠑⠭⠞⠕⠜, (texto)",
+            "⠼⠁⠚⠌⠼⠃, 10/2",
+            "⠁⠤⠃, a_b"
+        })
+        @DisplayName("Debe traducir caracteres especiales y puntuación (ajustado a ambigüedad)")
+        void debeTraducirCaracteresEspeciales(String textoBraille, String textoEspanolEsperado) {
+            // Arrange
+            Traduccion traduccion = Traduccion.crear(textoBraille, DireccionTraduccion.BRAILLE_A_ESPANOL);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals(textoEspanolEsperado, traduccion.getTextoTraducido());
+        }
+    }
+
+    @Nested
+    @DisplayName("Traducción Español → Braille Espejo")
+    class TraduccionEspanolABrailleEspejo {
+
+        @Test
+        @DisplayName("Debe traducir 'a' a espejo correctamente")
+        void debeTraducirAEspejo() {
+            // Arrange: 'a' es ⠁ (punto 1). Espejo es punto 4 (⠈).
+            String textoEspanol = "a";
+            Traduccion traduccion = Traduccion.crear(textoEspanol, DireccionTraduccion.ESPANOL_A_BRAILLE_ESPEJO);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("⠈", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir 'ab' a espejo invertido")
+        void debeTraducirAbEspejo() {
+            // Arrange: 'a' es ⠁ (1), 'b' es ⠃ (1-2).
+            // Normal: ⠁⠃
+            // Espejo chars: 'a'->⠈ (4), 'b'->⠘ (4-5).
+            // Reverse string: ⠘⠈
+            String textoEspanol = "ab";
+            Traduccion traduccion = Traduccion.crear(textoEspanol, DireccionTraduccion.ESPANOL_A_BRAILLE_ESPEJO);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("⠘⠈", traduccion.getTextoTraducido());
+        }
+
+        @Test
+        @DisplayName("Debe traducir 'hola' a espejo invertido")
+        void debeTraducirHolaEspejo() {
+            // Arrange
+            String textoEspanol = "hola";
+            // h (1-2-5) -> espejo (4-5-2) -> ⠚ (j)
+            // o (1-3-5) -> espejo (4-6-2) -> ⠪
+            // l (1-2-3) -> espejo (4-5-6) -> ⠸
+            // a (1)     -> espejo (4)     -> ⠈
+            // Reverse: ⠈⠸⠪⠚
+
+            Traduccion traduccion = Traduccion.crear(textoEspanol, DireccionTraduccion.ESPANOL_A_BRAILLE_ESPEJO);
+
+            // Act
+            traduccion.ejecutar();
+
+            // Assert
+            assertEquals("⠈⠸⠪⠚", traduccion.getTextoTraducido());
         }
     }
 
