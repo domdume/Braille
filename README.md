@@ -79,6 +79,7 @@ http://localhost:8080/Braille-1.0-SNAPSHOT/
    - **Español → Braille**
    - **Braille → Español**
 3. Hacer clic en "Traducir"
+4. (Opcional) Descargar imagen PNG, con opción de **Modo Espejo 🪞** para escritura manual
 
 ### API REST
 
@@ -123,20 +124,22 @@ src/main/java/
 ├── dto/                              # Data Transfer Objects
 │   ├── SolicitudTraduccion.java     # Request DTO
 │   └── RespuestaTraduccion.java     # Response DTO
-├── modelo/                           # Modelos de dominio
+├── model/                            # Modelos de dominio
+│   ├── Traduccion.java              # Entidad principal
 │   └── DireccionTraduccion.java     # Enum direcciones
-├── servicio/                         # Lógica de negocio
+├── service/                          # Lógica de negocio
 │   └── ServicioTraduccionBraille.java
 ├── servlet/                          # Controladores REST
 │   └── ControladorBraille.java
-├── filtro/                           # Filtros HTTP
+├── filter/                           # Filtros HTTP
 │   └── FiltroCors.java              # CORS configuration
-└── utilidad/                         # Utilidades
+└── util/                             # Utilidades
     └── MapeadorBraille.java         # Mapeo de caracteres
 
 src/main/webapp/
-├── test-simple.html                 # Interfaz principal
-├── index.jsp                        # Redirección
+├── index.jsp                        # Interfaz principal
+├── css/
+│   └── styles.css                   # Estilos
 └── WEB-INF/
     └── web.xml                      # Configuración web
 ```
@@ -149,6 +152,7 @@ src/main/webapp/
 - ✅ Signos de puntuación (. , ; : ? ! - ( ) ")
 - ✅ Mayúsculas y minúsculas
 - ✅ Traducción bidireccional
+- ✅ Modo Espejo para escritura manual
 - ✅ API REST con JSON
 - ✅ CORS habilitado
 
