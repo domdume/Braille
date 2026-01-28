@@ -103,7 +103,7 @@ public class MapeadorBraille {
      */
     private static final String SIGNO_NUMERO = "⠼";
 
-    // Símbolo para mayúsculas
+    // Símbolo para mayúsculas (Punto 6 en sistema español)
     private static final String SIGNO_MAYUSCULA = "⠨";
 
     /**
@@ -394,5 +394,34 @@ public class MapeadorBraille {
      */
     public static boolean esCaracterBraille(char c) {
         return (c >= '\u2800' && c <= '\u28FF');
+    }
+
+    public static String espejarBraille(String textoBraille) {
+        if (textoBraille == null || textoBraille.isEmpty()) return textoBraille;
+        String[] lineas = textoBraille.split("\n", -1);
+        StringBuilder resultado = new StringBuilder();
+        for (int i = 0; i < lineas.length; i++) {
+            StringBuilder lineaEspejada = new StringBuilder();
+            for (char c : lineas[i].toCharArray()) {
+                lineaEspejada.append(esCaracterBraille(c) ? espejarCaracter(c) : c);
+            }
+            resultado.append(lineaEspejada.reverse().toString());
+            if (i < lineas.length - 1) resultado.append("\n");
+        }
+        return resultado.toString();
+    }
+
+    private static char espejarCaracter(char c) {
+        int mask = c - '\u2800';
+        int newMask = 0;
+        if ((mask & 0x01) != 0) newMask |= 0x08;
+        if ((mask & 0x02) != 0) newMask |= 0x10;
+        if ((mask & 0x04) != 0) newMask |= 0x20;
+        if ((mask & 0x08) != 0) newMask |= 0x01;
+        if ((mask & 0x10) != 0) newMask |= 0x02;
+        if ((mask & 0x20) != 0) newMask |= 0x04;
+        if ((mask & 0x40) != 0) newMask |= 0x80;
+        if ((mask & 0x80) != 0) newMask |= 0x40;
+        return (char) ('\u2800' + newMask);
     }
 }

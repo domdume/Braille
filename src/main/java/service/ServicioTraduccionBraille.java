@@ -114,11 +114,18 @@ public class ServicioTraduccionBraille {
             traduccion.ejecutar();
 
             // Convertir resultado del dominio a DTO de respuesta
-            return new RespuestaTraduccion(
+            RespuestaTraduccion respuesta = new RespuestaTraduccion(
                     traduccion.getTextoOriginal(),
                     traduccion.getTextoTraducido(),
                     traduccion.getDireccion().toString()
             );
+
+            // Si es traducción a Braille, incluir la versión en espejo para comparación
+            if (direccion == DireccionTraduccion.ESPANOL_A_BRAILLE) {
+                respuesta.setTextoEspejo(util.MapeadorBraille.espejarBraille(traduccion.getTextoTraducido()));
+            }
+
+            return respuesta;
 
         } catch (IllegalArgumentException e) {
             // Error de validación
@@ -189,7 +196,7 @@ public class ServicioTraduccionBraille {
             return DireccionTraduccion.valueOf(direccionStr);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                    "Dirección inválida. Use 'ESPANOL_A_BRAILLE' o 'BRAILLE_A_ESPANOL'"
+                    "Dirección inválida. Use 'ESPANOL_A_BRAILLE', 'BRAILLE_A_ESPANOL' o 'ESPANOL_A_BRAILLE_ESPEJO'"
             );
         }
     }

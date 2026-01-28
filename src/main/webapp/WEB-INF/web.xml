@@ -4,6 +4,11 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
          version="6.0">
     <display-name>Braille Web Application</display-name>
+
+    <context-param>
+        <param-name>ocr.languages</param-name>
+        <param-value>spa</param-value>
+    </context-param>
     
     <!-- Welcome file configuration - now points to index.jsp -->
     <welcome-file-list>
