@@ -103,3 +103,4 @@ Una vez que el servidor esté corriendo (ya sea por IntelliJ o manualmente), abr
 http://localhost:8085/Braille_war_exploded/
 
 ![img_6.png](img/img_6.png)
+![img_8.png](img/img_8.png)
