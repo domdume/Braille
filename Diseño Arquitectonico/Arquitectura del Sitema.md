@@ -44,7 +44,7 @@ Los diagramas fuente se ubican en esta misma carpeta:
 | MapeadorBraille | util | Utilidad | Provee mapeos símbolo↔caracter, validaciones y soporte para números/mayúsculas. |
 
 ## 6. Patrones de Diseño Utilizados
-1. MVC + Service Layer: Separación estricta de presentación, coordinación y dominio.
+1. Service Layer: Separación estricta de presentación, coordinación y dominio.
 2. Rich Domain Model: `Traduccion` conserva lógica y estados evitando Anemia.
 3. DTO (Data Transfer Object): Intercambio desacoplado entre capas externas y servicio.
 4. Dependency Inversion: El Servlet depende del servicio (interfaz/comportamiento), evitando acoplarse a detalles del dominio interno.
