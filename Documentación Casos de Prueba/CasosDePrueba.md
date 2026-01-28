@@ -24,35 +24,35 @@ Todas las pruebas del dominio de traducción ejecutadas han pasado correctamente
 ## 6. Casos de Prueba Detallados (Dominio Traducción)
 
 ### TC-DOM-001
-- Nombre: Crear traducción válida
+- Nombre: Crear traducción válida con parámetros correctos
 - Método: `debeCrearTraduccionValida`
-- Objetivo: Verificar creación correcta de la entidad con estado inicial PENDIENTE.
-- Precondiciones: Clase cargada; parámetros no nulos ni vacíos.
-- Datos de entrada: texto="hola", dirección=ESPANOL_A_BRAILLE
+- Objetivo: Verificar creación correcta de la entidad con estado inicial PENDIENTE y atributos asignados.
+- Precondiciones: N/A.
+- Datos de entrada: texto="hola", dirección=ESPANOL_A_BRAILLE.
 - Pasos:
   1. Invocar `Traduccion.crear("hola", ESPANOL_A_BRAILLE)`.
 - Resultado esperado:
-  - Instancia no nula.
+  - Instancia no es `null`.
   - Texto original = "hola".
-  - Dirección correctamente asignada.
-  - Estado = PENDIENTE.
+  - Dirección = `ESPANOL_A_BRAILLE`.
+  - Estado = `PENDIENTE`.
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
-- Evidencia: Asserts todos verdes.
 
 ### TC-DOM-002
 - Nombre: Rechazar texto null
 - Método: `debeLanzarExcepcionSiTextoEsNull`
 - Objetivo: Validar que texto null produce `IllegalArgumentException`.
-- Entrada: texto=null, dirección=ESPANOL_A_BRAILLE
-- Resultado esperado: Excepción lanzada.
+- Entrada: texto=null, dirección=ESPANOL_A_BRAILLE.
+- Resultado esperado: `IllegalArgumentException`.
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
 
 ### TC-DOM-003
 - Nombre: Rechazar texto vacío/solo espacios
 - Método: `debeLanzarExcepcionSiTextoEstaVacio`
-- Entrada: texto="   "
+- Objetivo: Validar que texto vacío o espacios produce excepción.
+- Entrada: texto="   ".
 - Resultado esperado: `IllegalArgumentException`.
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
@@ -60,60 +60,61 @@ Todas las pruebas del dominio de traducción ejecutadas han pasado correctamente
 ### TC-DOM-004
 - Nombre: Rechazar dirección null
 - Método: `debeLanzarExcepcionSiDireccionEsNull`
-- Entrada: dirección=null
+- Objetivo: Validar que dirección nula produce excepción.
+- Entrada: dirección=null.
 - Resultado esperado: `IllegalArgumentException`.
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
 
 ### TC-DOM-005
 - Nombre: Traducir texto simple Español→Braille
-- Método: `debeTraducirTextoSimple`
-- Entrada: "hola"
-- Resultado esperado: Traducción no vacía, estado COMPLETADA.
+- Método: `TraduccionEspanolABraille.debeTraducirTextoSimple`
+- Entrada: "hola".
+- Resultado esperado: Traducción completada, texto traducido no nulo ni vacío.
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
 
 ### TC-DOM-006 (Parametrizado - Palabras válidas)
 - Nombre: Traducir palabras válidas Español→Braille
-- Método: `debeTraducirPalabrasValidas`
-- Entradas (`@ValueSource`): a, hola, mundo, café, niño
-- Resultado esperado: Para cada palabra, traducción no nula y completada.
+- Método: `TraduccionEspanolABraille.debeTraducirPalabrasValidas`
+- Entradas (`@ValueSource`): a, hola, mundo, café, niño.
+- Resultado esperado: Para cada palabra, traducción completada y resultado no nulo.
 - Resultado obtenido: Todas correctas.
 - Estado: Éxito.
 
 ### TC-DOM-007
 - Nombre: Traducción exacta "hola"
-- Método: `debeTraducirHolaExactamente`
-- Entrada: "hola"
-- Esperado: "⠓⠕⠇⠁"
+- Método: `TraduccionEspanolABraille.debeTraducirHolaExactamente`
+- Entrada: "hola".
+- Esperado: "⠓⠕⠇⠁".
 - Obtenido: Conforme.
 - Estado: Éxito.
 
 ### TC-DOM-008
 - Nombre: Traducción exacta "hola mundo"
-- Método: `debeTraducirHolaMundoExactamente`
-- Entrada: "hola mundo"
-- Esperado: "⠓⠕⠇⠁⠀⠍⠥⠝⠙⠕"
+- Método: `TraduccionEspanolABraille.debeTraducirHolaMundoExactamente`
+- Entrada: "hola mundo".
+- Esperado: "⠓⠕⠇⠁⠀⠍⠥⠝⠙⠕".
 - Obtenido: Conforme.
 - Estado: Éxito.
 
 ### TC-DOM-009 (Parametrizado - Tabla Español→Braille)
-- Nombre: Traducción exacta palabras específicas
-- Método: `debeTraducirPalabrasEspanolABrailleExacto`
+- Nombre: Traducción exacta palabras y frases específicas
+- Método: `TraduccionEspanolABraille.debeTraducirPalabrasEspanolABrailleExacto`
 - Entradas (`@CsvSource`):
   - hola → ⠓⠕⠇⠁
   - mundo → ⠍⠥⠝⠙⠕
-  - café → ⠉⠁⠋⠮ (nota: representa la tilde mediante símbolo adecuado según mapeo interno)
+  - café → ⠉⠁⠋⠮
   - niño → ⠝⠊⠻⠕
   - a → ⠁
-  - España → ⠠⠑⠎⠏⠁⠻⠁
-- Resultado esperado: Coincidencia exacta de cada salida.
+  - España → ⠨⠑⠎⠏⠁⠻⠁
+- Resultado esperado: Coincidencia exacta de cada salida Braille.
 - Resultado obtenido: Todas correctas.
 - Estado: Éxito.
 
 ### TC-DOM-010 (Parametrizado - Números)
 - Nombre: Traducción con números embebidos
-- Método: `debeTraducirTextoConNumeros`
+- Método: `TraduccionEspanolABraille.debeTraducirTextoConNumeros`
 - Entradas (`@CsvSource`):
   - 123 → ⠼⠁⠃⠉
   - hola 123 → ⠓⠕⠇⠁⠀⠼⠁⠃⠉
@@ -122,52 +123,152 @@ Todas las pruebas del dominio de traducción ejecutadas han pasado correctamente
 - Resultado obtenido: Conforme.
 - Estado: Éxito.
 
-### TC-DOM-011
-- Nombre: Traducción Braille→Español exacta
-- Método: `debeTraducirBrailleHola`
-- Entrada: "⠓⠕⠇⠁"
-- Esperado: "hola"
+### TC-DOM-011 (Parametrizado - Caracteres Especiales)
+- Nombre: Traducción palabras con acentos y especiales
+- Método: `TraduccionEspanolABraille.debeTraducirPalabrasConCaracteresEspeciales`
+- Entradas variadas: José, María, bebé, papá, Ramón, Raúl, pingüino.
+- Resultado esperado: Mapeo correcto de tildes (⠮, ⠌, ⠷, ⠬, ⠾) y diéresis (⠳).
+- Resultado obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-012
+- Nombre: Traducción Braille→Español exacta simple
+- Método: `TraduccionBrailleAEspanol.debeTraducirBrailleHola`
+- Entrada: "⠓⠕⠇⠁".
+- Esperado: "hola".
 - Obtenido: Conforme.
 - Estado: Éxito.
 
-(El detalle completo anterior se conserva para trazabilidad; futuros casos se agregarán aquí manteniendo el mismo esquema.)
+### TC-DOM-013
+- Nombre: Traducción Braille→Español frase con espacio
+- Método: `TraduccionBrailleAEspanol.debeTraducirHolaMundo`
+- Entrada: "⠓⠕⠇⠁⠀⠍⠥⠝⠙⠕".
+- Esperado: "hola mundo".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-014
+- Nombre: Traducción Braille→Español números
+- Método: `TraduccionBrailleAEspanol.debeTraducirNumeros`
+- Entrada: "⠼⠁⠃⠉".
+- Esperado: "123".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-015
+- Nombre: Traducción Braille→Español mayúscula simple
+- Método: `TraduccionBrailleAEspanol.debeTraducirMayusculas`
+- Entrada: "⠨⠓⠕⠇⠁".
+- Esperado: "Hola".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-016
+- Nombre: Traducción Braille→Español todo mayúsculas
+- Método: `TraduccionBrailleAEspanol.debeTraducirTodoMayusculas`
+- Entrada: "⠨⠑⠨⠎⠨⠏⠨⠁⠨⠻⠨⠁".
+- Esperado: "ESPAÑA".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-017 (Parametrizado - Braille a Especiales)
+- Nombre: Traducción Braille→Español caracteres especiales
+- Método: `TraduccionBrailleAEspanol.debeTraducirCaracteresEspeciales`
+- Entradas: Signos de interrogación, paréntesis, operaciones matemáticas.
+- Resultado esperado: Coincidencia con texto español (ej: "+Hola+", "(texto)").
+- Resultado obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-018
+- Nombre: Traducción a Espejo - Carácter simple
+- Método: `TraduccionEspanolABrailleEspejo.debeTraducirAEspejo`
+- Entrada: "a".
+- Esperado: "⠈" (Espejo de punto 1 es punto 4).
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-019
+- Nombre: Traducción a Espejo - Inversión cadena
+- Método: `TraduccionEspanolABrailleEspejo.debeTraducirAbEspejo`
+- Entrada: "ab".
+- Esperado: "⠘⠈" (Cadena invertida y puntos espejados).
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-020
+- Nombre: Traducción a Espejo - Palabra completa
+- Método: `TraduccionEspanolABrailleEspejo.debeTraducirHolaEspejo`
+- Entrada: "hola".
+- Esperado: "⠈⠸⠪⠚".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-021
+- Nombre: Traducción signo igual
+- Método: `debeTraducirSignoIgual`
+- Entrada: "=".
+- Esperado: "⠶".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-022
+- Nombre: Traducción compleja (Mayúsculas, guiones, números)
+- Método: `debeTraducirMayusculasYNumerosBien`
+- Entrada: "DOME-123".
+- Esperado: "⠨⠙⠨⠕⠨⠍⠨⠑⠤⠼⠁⠃⠉".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-023
+- Nombre: Preservar salto de línea
+- Método: `debePreservarSaltoDeLinea`
+- Entrada: "hola\nmundo".
+- Resultado esperado: Contiene `\n` y traduce texto circundante.
+- Resultado obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-024
+- Nombre: Traducción signos matemáticos (Ecuación)
+- Método: `debeTraducirSignosMatematicos`
+- Entrada: "2+2=4".
+- Esperado: "⠼⠃⠖⠼⠃⠶⠼⠙".
+- Obtenido: Conforme.
+- Estado: Éxito.
+
+### TC-DOM-025 (Parametrizado - Especiales Final)
+- Nombre: Cobertura completa signos puntuación y matemáticos
+- Método: `debeTraducirCaracteresEspeciales`
+- Entradas: ¡Hola!, ¿Cómo?, (texto), a-b, 5*3, 10/2.
+- Resultado esperado: Traducción Braille correcta para cada símbolo especial y contexto.
+- Resultado obtenido: Conforme.
+- Estado: Éxito.
 
 ## 7. Análisis de Cobertura y Calidad (Dinámico)
 Estado actual:
-- Validaciones de creación correctas.
-- Traducción Español→Braille: amplia para palabras y números.
-- Traducción Braille→Español: mínima (solo un caso); requiere expansión.
-Pendiente ampliar a: símbolos no válidos, puntuación, estados y comportamiento repetido.
+- Validaciones de creación correctas (nulos, vacíos).
+- Traducción Español→Braille: Muy alta cobertura (palabras, frases, números, acentos, diéresis, símbolos).
+- Traducción Braille→Español: Cobertura media (básica, números, mayúsculas, algunos símbolos).
+- Modo Espejo: Cobertura funcional básica.
+- Casos Borde: Se han cubierto saltos de línea y combinaciones alfanuméricas complejas.
 
 ## 8. Riesgos y Próximas Acciones
 | Riesgo | Descripción | Severidad | Mitigación Propuesta |
 |--------|-------------|-----------|----------------------|
-| Decodificación limitada | Poca cobertura Braille→Español | Media | Agregar batería de casos invertidos parametrizados |
-| Validación de símbolos | No se prueba rechazo de Braille inválido en dominio (solo observado en runtime) | Media | Añadir casos que confirmen `IllegalArgumentException` al ejecutar con caracteres no mapeados |
-| Puntuación | Ausencia de pruebas con comas, puntos, interrogaciones | Baja | Extender mapa y pruebas |
-| Persistencia futura | Cambios futuros podrían romper invariantes sin pruebas | Media | Añadir pruebas de invariantes antes de incorporar repositorios |
-
-(La tabla de riesgos se mantiene vigente hasta nueva ampliación.)
+| Validación Braille Inválido | No hay casos negativos para inputs Braille mal formados (ej: caracteres no Braille) | Media | Agregar tests que espera excepciones o comportamiento definido ante input sucio |
+| Rendimiento textos largos | No hay pruebas de carga o textos muy extensos | Baja | Crear test con Lorem Ipsum largo para verificar tiempos |
+| Consistencia bidireccional | No se valida automáticamente que `traducir(traducir(x)) == x` | Media | Implementar Property-Based Testing o test de ciclo completo |
 
 ## 9. Plan de Evolución de Pruebas
-1. Ampliar Braille→Español con batería parametrizada.
-2. Incorporar pruebas de error por caracteres inválidos.
-3. Añadir pruebas de servicios (coordinación y reglas adicionales).
-4. Verificar controladores: sólo delegación y validación superficial (sin lógica de negocio).
-5. Añadir pruebas de DTO: mapeo y formatos.
-6. Preparar pruebas de integración (cuando exista persistencia real / repositorios).
-7. Métrica futura: cobertura por línea y mutación (pitest) para asegurar robustez de reglas.
+1.  **Reforzar Braille → Español**: Añadir más combinaciones complejas y casos de error.
+2.  **Validación de Integridad**: Tests de ida y vuelta (Español->Braille->Español).
+3.  **Capas Superiores**: Extender pruebas a `ServicioTraduccionBraille` cuando incorpore lógica de negocio real.
+4.  **Integración**: Probar flujo completo desde Servlet/Controller.
 
 ## 10. Conclusión
-El estado actual de las pruebas de dominio es sólido para los escenarios básicos de creación y traducción Español→Braille. El documento se mantendrá vivo y se actualizará en futuros commits al agregarse nuevas áreas (servicios, controladores, validaciones, errores). Se recomienda priorizar la ampliación de cobertura inversa (Braille→Español) y casos negativos.
+El conjunto actual de pruebas unitarias en `TraduccionTest` demuestra una robustez significativa en la lógica central de traducción. Se cubren casos felices, casos de borde comúnmente esperados y escenarios de mezcla de tipos de caracteres. La base es sólida para continuar el desarrollo de las capas de servicio y presentación.
 
 ## 11. Formato para Documentar Re-Ejecuciones
 En caso de fallo futuro, agregar bajo el caso:
-- Causa raíz.
-- Ajuste aplicado (código / configuración).
-- Evidencia de nueva ejecución exitosa.
-
-Plantilla rápida para futuros fallos:
 ```
 [Re-ejecución] TC-DOM-XYZ
 Fallo original: <mensaje>
@@ -177,5 +278,4 @@ Resultado tras corrección: Éxito / Nuevo fallo
 Fecha re-ejecución: <fecha>
 ```
 
----
 Documento mantenido de forma evolutiva. Próximas actualizaciones pueden reorganizar secciones para reflejar nuevas capas.
