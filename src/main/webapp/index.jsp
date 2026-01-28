@@ -892,7 +892,7 @@
                         }, 2000);
                     })
                     .catch(() => {
-                        alert('Copiado completo.');
+                        alert('Copiado correctamente al portapapeles.');
                     });
             }
 
