@@ -294,6 +294,7 @@
                             <!-- Acciones del Teclado -->
                             <div class="flex gap-3 w-full max-w-xs">
                                 <button type="button" onclick="insertarCaracterBraille()" class="flex-1 bg-accent-600 hover:bg-accent-700 text-white font-bold py-3 rounded-xl shadow-md transition-all">Insertar</button>
+                                <button type="button" onclick="toggleMayuscula()" id="btnMayuscula" class="px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 font-bold transition-all" title="Modo Mayúscula">⇧</button>
                                 <button type="button" onclick="limpiarPuntos()" class="px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-600 hover:bg-gray-50 font-bold">X</button>
                                 <button type="button" onclick="insertarEspacioBraille()" class="px-6 py-3 bg-gray-200 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-300 font-bold">␣</button>
                             </div>
@@ -497,6 +498,7 @@
             let ultimaTraduccionBraille = '';
             let streamCamara = null;
             let puntosSeleccionados = new Set();
+            let modoMayuscula = false;
             let tesseractWorker = null;
             let fotoCapturada = null;
             let esDelArchivo = false;
@@ -578,9 +580,33 @@
                 if (char === '⠀' && puntosSeleccionados.size === 0) return;
                 
                 const textarea = document.getElementById('texto');
+                
+                // Si el modo mayúscula está activo, insertar el indicador de mayúscula (⠠) antes del carácter
+                if (modoMayuscula) {
+                    textarea.value += '⠨';  // Indicador de mayúscula en Braille (punto 6)
+                    modoMayuscula = false;  // Desactivar el modo después de usarlo
+                    actualizarBotonMayuscula();
+                }
+                
                 textarea.value += char;
                 actualizarContador();
                 limpiarPuntos();
+            }
+
+            function toggleMayuscula() {
+                modoMayuscula = !modoMayuscula;
+                actualizarBotonMayuscula();
+            }
+
+            function actualizarBotonMayuscula() {
+                const btn = document.getElementById('btnMayuscula');
+                if (modoMayuscula) {
+                    btn.classList.remove('bg-white', 'text-gray-600', 'border-gray-300');
+                    btn.classList.add('bg-accent-500', 'text-white', 'border-accent-600');
+                } else {
+                    btn.classList.remove('bg-accent-500', 'text-white', 'border-accent-600');
+                    btn.classList.add('bg-white', 'text-gray-600', 'border-gray-300');
+                }
             }
 
             function insertarEspacioBraille() {
@@ -673,8 +699,22 @@
                     const { data: { text } } = await tesseractWorker.recognize(fotoCapturada);
 
                     if (!text || text.trim().length === 0) {
-                        mostrarError('No se detectó texto en la imagen. Asegúrate que el texto sea visible y esté bien enfocado.');
-                        volverACapturar();
+                        mostrarEstado(null);
+                        
+                        // Si es de archivo, mostrar opción de subir otra imagen
+                        if (esDelArchivo) {
+                            alert('No se reconoció texto en la imagen. Por favor, intenta con otra imagen que tenga texto claro y visible.');
+                            cerrarCamara();
+                            fotoCapturada = null;
+                            // Abrir selector de archivos nuevamente
+                            setTimeout(() => {
+                                document.getElementById('inputArchivo').click();
+                            }, 100);
+                        } else {
+                            // Si es de cámara, volver a capturar
+                            mostrarError('No se detectó texto en la imagen. Asegúrate que el texto sea visible y esté bien enfocado.');
+                            volverACapturar();
+                        }
                         return;
                     }
 
@@ -693,8 +733,19 @@
 
                 } catch (err) {
                     console.error('Error en OCR:', err);
-                    mostrarError('Error al extraer texto: ' + err.message);
-                    volverACapturar();
+                    mostrarEstado(null);
+                    
+                    if (esDelArchivo) {
+                        alert('Error al procesar la imagen: ' + err.message + '. Por favor, intenta con otra imagen.');
+                        cerrarCamara();
+                        fotoCapturada = null;
+                        setTimeout(() => {
+                            document.getElementById('inputArchivo').click();
+                        }, 100);
+                    } else {
+                        mostrarError('Error al extraer texto: ' + err.message);
+                        volverACapturar();
+                    }
                 }
             }
 
@@ -774,7 +825,9 @@
 
             function subirOtraImagen() {
                 fotoCapturada = null;
-                esDelArchivo = false;
+                esDelArchivo = true; // Mantener true porque vamos a subir otro archivo
+                const modal = document.getElementById('modalCamara');
+                modal.classList.add('hidden');
                 document.getElementById('inputArchivo').click();
             }
 
@@ -839,7 +892,7 @@
                         }, 2000);
                     })
                     .catch(() => {
-                        alert('Error al copiar el texto');
+                        alert('Copiado completo.');
                     });
             }
 
