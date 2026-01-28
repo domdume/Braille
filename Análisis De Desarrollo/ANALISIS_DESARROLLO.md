@@ -580,18 +580,6 @@ if (esDelArchivo) {
     // Mostrar: "Retomar Foto"
     // Ocultar: "Subir otra imagen"
 }
-```
-Perfecto, ya entendí exactamente qué falta 👍
-Vamos a **agregar un punto nuevo**, bien formal y **propio de un documento de análisis de cambios**, donde se vea:
-
-* **Alternativas consideradas**
-* **Criterios de evaluación**
-* **Por qué se eligió la solución final**
-* **Por qué se descartaron las otras**
-
-Te dejo el **punto listo para pegar**, numerado para que encaje con el documento.
-
----
 
 ## 17. ANÁLISIS DE ALTERNATIVAS Y JUSTIFICACIÓN DE DECISIONES
 

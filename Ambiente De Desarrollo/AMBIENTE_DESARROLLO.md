@@ -50,6 +50,7 @@ La estrategia emplea ramas permanentes para backend, frontend y desarrollo, más
 * `backend` – Desarrollo del lado del servidor.
 * `frontend` – Desarrollo de la interfaz JSP/JS.
 * `feature/<nombre>` – Ramas temporales para nuevas funcionalidades.
+* `segunda-iteracion` – Rama de iteración para cambios solicitados de la segunda iteración.
 * `documentacion` – Archivos, diagramas y manuales (opcional).
 * `main` – Código estable listo para entrega.
 
@@ -63,6 +64,7 @@ La estrategia emplea ramas permanentes para backend, frontend y desarrollo, más
 | **`develop`**       | Integración | Rama troncal donde confluyen `backend` y `frontend` tras completar una funcionalidad.                                                  |
 | **`backend`**       | Desarrollo  | Rama permanente dedicada al desarrollo del servidor (Servlets, servicios, DTOs, filtros, utilidades).                                  |
 | **`frontend`**      | Desarrollo  | Rama permanente dedicada a la interfaz de usuario (JSP, CSS, JS).                                                                      |
+| **`segunda-iteracion`** | Iteración  | Rama para la segunda iteración del proyecto donde se integran cambios solicitados (OCR, UI mejorada, nuevas funcionalidades).          |
 | **`feature/*`**     | Temporal    | Ramas cortas para implementar funcionalidades independientes. Crecen desde `backend` o `frontend` y se eliminan después de integrarse. |
 | **`documentacion`** | Soporte     | Rama auxiliar para manuales, informes y diagramas.                                                                                     |
 
@@ -106,12 +108,15 @@ Las mejoras también partieron de ramas `feature/*`.
 main
   ↑
   └── develop
-         ↑          ↑
-         │          │
-     backend     frontend
-         ↑          ↑
-         │          │
-  feature/*     feature/*
+         ↑                    ↑
+         │                    │
+     backend              frontend
+         ↑                    ↑
+         │                    │
+  feature/*              feature/*
+  
+  segunda-iteracion ← Rama de Iteración (cambios de la segunda iteración)
+  
 ```
 
 ---
